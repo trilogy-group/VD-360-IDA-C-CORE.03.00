@@ -79,7 +79,8 @@ push @ENUMS, ('searchvar.h',    'ImplicitBranchList', 'SearchVar',       '+');
 push @ENUMS, ('searchvar.h',    'BranchFilter',       'SearchVar',       '+');
 push @ENUMS, ('searchvar.h',    'Voice',              'SearchVar',       '+');
 push @ENUMS, ('searchvar.h',    'ImplicitStreetList', 'SearchVar',       '+');
-push @ENUMS, ('searchvar.h',    'StreetFilter',       'SearchVar',       '.');
+push @ENUMS, ('searchvar.h',    'StreetFilter',       'SearchVar',       '+');
+push @ENUMS, ('searchvar.h',    'Relax',              'SearchVar',       '.');
 
 push @ENUMS, ('searchvar.h',    'Expansion',          'Expansion',       '.');
 

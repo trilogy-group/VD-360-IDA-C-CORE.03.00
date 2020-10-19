@@ -554,6 +554,9 @@ ReturnStatus StringToEnum::enumOfSearchVar(ULong& enumValue, const char* strValu
 	if (strcmp(strValue, "noStreetFilter") == 0) { enumValue = 0; return isOk; }
 	if (strcmp(strValue, "streetFilter") == 0) { enumValue = 2097152; return isOk; }
 	if (strcmp(strValue, "streetFilterMask") == 0) { enumValue = 2097152; return isOk; }
+	if (strcmp(strValue, "noRelax") == 0) { enumValue = 0; return isOk; }
+	if (strcmp(strValue, "relax") == 0) { enumValue = 16777216; return isOk; }
+	if (strcmp(strValue, "relaxMask") == 0) { enumValue = 16777216; return isOk; }
 	idaTrackExcept(("StringToEnum::enumOfSearchVar(): invalid parameter \"%s\"",strValue));
 	return isNotOk;
 }

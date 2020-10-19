@@ -2,7 +2,7 @@
 //
 //   File:          idaprocs.par.tpl
 //   Revision:      1.2
-//   Date:          05-DEC-2009 20:16:49
+//   Date:          19-NOV-2009 15:16:25
 //
 //   DESCRIPTION:
 //
@@ -23,5 +23,6 @@ BEGIN
 	processId   = #890
 	startNo     = #1
 	autoStart   = "true"
+	restartable = #20
 END
 ENDSET

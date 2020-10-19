@@ -99,25 +99,6 @@ if ($compile eq "no" )
     exit;
   }
 
-if (  $UNAME eq "Windows")
-  {
-    makereleaseinfo ();
-    
-    $ENV{'OSAAPI_LIB_PATH'}=$ENV{'OSAAPIHOME'};
-    $ENV{'CL_LIB_PATH'}=$ENV{'CLHOME'};
-    $ENV{'STL_INCLUDE_PATH'}=$ENV{'STLPATH'};
-    
-    print "CL_LIB_PATH     = $ENV{'CL_LIB_PATH'}\n";
-    print "OSAAPI_LIB_PATH = $ENV{'OSAAPI_LIB_PATH'}\n";
-    print "STL_INCLUDE_PATH= $ENV{'STL_INCLUDE_PATH'}\n";
-    print "BUILD_ID        = $ENV{'BUILD_ID'}\n";
-
-    
-    $cmd = "devenv.exe ida.sln";
-    system $cmd; 
-
-    exit;
-  }
 
 if ($compile eq "yes")
   {
@@ -1085,11 +1066,15 @@ sub doExecuteAll
            {
              print "\nYour BuildInfo.xml delivers the following settings:\n\n";
            }
-         print "CLHOME=       $ENV{'CLHOME'}\n";
-         print "OSAAPIHOME=   $ENV{'OSAAPIHOME'}\n";
-         print "TMP=          $ENV{'TMP'}\n";
-         print "STLPATH=      $ENV{'STLPATH'}\n";
-         print "XERCESHOME=   $ENV{'XERCESHOME'}\n\n";
+         print "CLHOME     = $ENV{'CLHOME'}\n";
+         print "OSAAPIHOME = $ENV{'OSAAPIHOME'}\n";
+         print "TMP        = $ENV{'TMP'}\n";
+         print "STLPATH    = $ENV{'STLPATH'}\n";
+         if (  $UNAME ne "Windows")
+           {
+             print "XERCESHOME = $ENV{'XERCESHOME'}\n\n";
+           }
+         print "BUILD_ID   = $ENV{'BUILD_ID'}\n";
 
      if ( $auto eq "no" )
        {
@@ -1180,7 +1165,26 @@ sub doExecuteAll
      #
      # Prepare log file and start building
      #
-     
+
+     if (  $UNAME eq "Windows")
+  {
+    makereleaseinfo ();
+    
+    $ENV{'OSAAPI_LIB_PATH'}=$ENV{'OSAAPIHOME'};
+    $ENV{'CL_LIB_PATH'}=$ENV{'CLHOME'};
+    $ENV{'STL_INCLUDE_PATH'}=$ENV{'STLPATH'};
+    
+    print "CL_LIB_PATH     = $ENV{'CL_LIB_PATH'}\n";
+    print "OSAAPI_LIB_PATH = $ENV{'OSAAPI_LIB_PATH'}\n";
+    print "STL_INCLUDE_PATH= $ENV{'STL_INCLUDE_PATH'}\n";
+
+    
+    $cmd = "devenv.exe ida.sln";
+    system $cmd; 
+
+    exit;
+  }
+
 
      open(LOG,">$logfile");
      
