@@ -3,23 +3,13 @@
 
 //CB>-------------------------------------------------------------------
 //
-//   File, Component, Release:
-//                  IdaTdfProcess.h 1.1
-//
 //   File:      IdaTdfProcess.h
 //   Revision:  1.1
-//   Date:      09-JAN-2009 09:42:55
-//
-//   DESCRIPTION:
-//
+//   Date:      28-MAY-2010 10:54:00
 //
 //<CE-------------------------------------------------------------------
 
-
-
-
 static const char * SCCS_Id_IdaTdfProcess_h = "@(#) IdaTdfProcess.h 1.1";
-
 
 //--------------------- include files ------------------------------------
 #include <pcpprocess.h>

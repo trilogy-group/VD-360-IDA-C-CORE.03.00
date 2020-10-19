@@ -2,22 +2,13 @@
 #define IdaXmlTags_h
 //CB>-------------------------------------------------------------------
 //
-//   File, Component, Release:
-//                  IdaXmlTags.h 1.1
-//
 //   File:      IdaXmlTags.h
 //   Revision:  1.1
-//   Date:      09-JAN-2009 09:42:57
-//
-//   DESCRIPTION:
-//
-//
+//   Date:      28-MAY-2010 10:54:04
 //
 //<CE-------------------------------------------------------------------
 
-
 static const char * SCCS_Id_IdaXmlTags_h = "@(#) IdaXmlTags.h 1.1";
-
 
 //	Für die Erzeugung eines XML-Dokumentes:
 //	-------------------------------------------------------------
@@ -28,9 +19,6 @@ static const char * SCCS_Id_IdaXmlTags_h = "@(#) IdaXmlTags.h 1.1";
 //	definiert ist, nicht aber für "char*". Bei Verwendung von
 //	"char*" würde der Konstruktor von String jedesmal implizit
 //	aufgerufen werden.
-
-
-
 
 static const String tagHEADER("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
 

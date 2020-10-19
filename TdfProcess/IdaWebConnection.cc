@@ -1,3 +1,16 @@
+//CB>---------------------------------------------------------------------------
+//
+//   File:      IdaWebConnection.cc
+//   Revision:  1.4
+//   Date:      06-AUG-2010 17:13:18
+//
+//   Description: handle connections to ida servlets
+//
+//<CE---------------------------------------------------------------------------
+
+static const char * SCCS_Id_IdaWebConnection_cc = "@(#) IdaWebConnection.cc 1.4";
+
+
 #include "IdaWebConnection.h"
 #include "IdaWebInterface.h"
 #include "IdaXmlHelper.h"

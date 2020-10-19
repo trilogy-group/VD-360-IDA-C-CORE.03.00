@@ -255,26 +255,11 @@ print H_FILE <<EOT
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 //CB>---------------------------------------------------------------------------
 //
-//   File, Component, Release:
-//                  TdfProcess\gencode.pl 1.0 12-APR-2008 18:52:13 DMSYS
-//
-//   File:      TdfProcess\gencode.pl
-//   Revision:      1.0
-//   Date:          12-APR-2008 18:52:13
+//   File:          IdaStringToEnum.h
+//   Revision:      1.2
+//   Date:          28-MAY-2010 10:54:04
 //
 //   DESCRIPTION:
 //     
@@ -284,8 +269,7 @@ print H_FILE <<EOT
 //
 //<CE---------------------------------------------------------------------------
 
-static const char * SCCS_Id_IdaStringToEnum_h = "@(#) TdfProcess\gencode.pl 1.0 12-APR-2008 18:52:13 DMSYS";
-
+static const char * SCCS_Id_IdaStringToEnum_h = "@(#) gencode.pl 1.2";
 
 // You can not instanciate this class
 
@@ -379,22 +363,11 @@ print CC_FILE <<EOT
  
 //CB>---------------------------------------------------------------------------
 //
-//   File, Component, Release:
-//                  TdfProcess\gencode.pl 1.0 12-APR-2008 18:52:13 DMSYS
-//
-//   File:      TdfProcess\gencode.pl
-//   Revision:      1.0
-//   Date:          12-APR-2008 18:52:13
-//
-//   DESCRIPTION:
-//     
-//     
-//
+//   File:          gencode.pl
+//   Revision:      1.2
+//   Date:          28-MAY-2010 10:54:04
 //
 //<CE---------------------------------------------------------------------------
-
-static const char * SCCS_Id_IdaStringToEnum_cc = "@(#) TdfProcess\gencode.pl 1.0 12-APR-2008 18:52:13 DMSYS";
-
 
 #include <string.h>
 #include <pcpdefs.h>

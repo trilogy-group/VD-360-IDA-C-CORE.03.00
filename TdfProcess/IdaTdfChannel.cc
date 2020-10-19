@@ -1,24 +1,16 @@
 
 //CB>---------------------------------------------------------------------------
 //
-//   File, Component, Release:
-//                  IdaTdfChannel.cc 1.1
-//
 //   File:      IdaTdfChannel.cc
 //   Revision:  1.1
-//   Date:      09-JAN-2009 09:42:57
+//   Date:      28-MAY-2010 10:53:58
 //
 //   DESCRIPTION:
 //     Representation of one TDF channel.
 //
-//
-//
 //<CE---------------------------------------------------------------------------
 
 static const char * SCCS_Id_IdaTdfChannel_cc = "@(#) IdaTdfChannel.cc 1.1";
-
-
-
 
 #include <IdaDecls.h>
 #include <idatraceman.h>

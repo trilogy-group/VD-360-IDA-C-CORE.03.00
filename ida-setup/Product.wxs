@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?define companyName="Volt Delta International GmbH"?>
 <?define Manufacturer="Volt Delta"?>
 <?define ProductName="IDA"?>
 <?define ProductVersion="03.00"?>
@@ -12,10 +13,24 @@
 <?define RequiredClasslibProductVersion="03.10"?>
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="f08157fb-ed76-4258-9114-499a535d1949" Name="$(var.Manufacturer) $(var.ProductName) $(var.ProductVersion)" 
-           Language="1033" Version="$(var.ProductVersion).$(env.BUILD_ID)" Manufacturer="$(var.Manufacturer)" 
+  <Product Id="*" Name="$(var.Manufacturer) $(var.ProductName) $(var.ProductVersion)"
+           Language="1033" Version="$(var.ProductVersion).$(env.BUILD_ID)" Manufacturer="$(var.companyName)"
            UpgradeCode="384a6943-93c2-47be-946c-5cd82c40c787">
-    <Package InstallerVersion="200" Compressed="yes" />
+
+    <Package InstallerVersion="300" Compressed="yes" InstallScope="perMachine" />
+
+    <Upgrade Id="384a6943-93c2-47be-946c-5cd82c40c787">
+      <UpgradeVersion Minimum="$(var.ProductVersion).0.0"
+                      Maximum="$(var.ProductVersion).$(env.BUILD_ID)"
+                      IncludeMinimum="yes"
+                      IncludeMaximum="yes"
+                      Property="MYAPPVERSION" />
+
+      <UpgradeVersion Minimum="$(var.ProductVersion).$(env.BUILD_ID)"
+                      OnlyDetect="yes"
+                      Property="NEWERVERSIONDETECTED" />
+    </Upgrade>
+    
     <Property Id="WEB_INTERFACE_PORT" Value="$(var.DefaultWebInterfacePort)"/>
 
     <!-- Get installed classlib version -->
@@ -42,12 +57,6 @@
     <Property Id="IDA_ROOT" Secure="yes">
       <RegistrySearch Id="env.IDA_ROOT" Root="HKLM" Key="SYSTEM\CurrentControlSet\Control\Session Manager\Environment" Name="IDA_ROOT" Type="raw"/>
     </Property>
-
-
-    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Restart Classlib Service" />
-    <CustomAction Id="RestartClasslib" Directory="CL_ROOT_PATH.bin" ExeCommand="classlib_service_restart.bat" Return="ignore"  />
-    <Property Id="NETEXE">net.exe</Property>
-    <Property Id="classlib_service_restart.bat">$(env.CL_ROOT_PATH)bin\classlib_service_restart.bat</Property>
 
     <Condition Message="Classlib Runtime Version $(var.RequiredClasslibProductVersion) is not installed">
       <![CDATA[Installed OR (CL_PRODUCT_VERSION>="$(var.RequiredClasslibProductVersion)")]]>
@@ -158,10 +167,10 @@
       <DialogRef Id="ResumeDlg" />
       <DialogRef Id="UserExit" />
 
-      <Publish Dialog="MyExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+<!--      <Publish Dialog="MyExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
       <Publish Dialog="MyExitDialog" Control="Finish" Order="1" Event="DoAction" Value="RestartClasslib">LAUNCHAPPONEXIT</Publish>
 
-
+-->
       <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="LicenseAgreementDlg">1</Publish>
       <Publish Dialog="LicenseAgreementDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
       <Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog" Value="PortNumberDlg">1</Publish>
@@ -181,6 +190,7 @@
       <Publish Dialog="MaintenanceTypeDlg" Control="RepairButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
       <Publish Dialog="MaintenanceTypeDlg" Control="RemoveButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
       <Publish Dialog="MaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg">1</Publish>
+      <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
 
       <Dialog Id="PortNumberDlg" Width="370" Height="270" Title="[ProductName] Setup">
         <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Port Number" />
@@ -196,7 +206,10 @@
 
         <Control Id="WebInterfacePortLabel" Type="Text" X="20" Y="140" Width="290" Height="13" Text="&amp;Web Interface Port:" />
         <Control Id="WebInterfacePort" Type="Edit" X="20" Y="152" Width="320" Height="18" Property="WEB_INTERFACE_PORT" Text="[WEB_INTERFACE_PORT]"/>
-
+        <Control Id="LaunchCheckBox" Type="CheckBox" X="20" Y="210" Width="330" Height="17" Property="LAUNCHAPPONEXIT" Hidden="yes" CheckBoxValue="1" Text="(Re)start Classlib Service after installation.">
+          <Condition Action="show">VersionNT>=600</Condition>
+          <!--  VersionNT>=600 (ab Vista) sollte es sein -->
+        </Control>
         <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
         <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="&amp;Next">
           <Condition Action="disable"><![CDATA[SERVICE_NAME="" OR SERVICE_NAME=""]]></Condition>
@@ -207,6 +220,8 @@
           <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
         </Control>
       </Dialog>
+
+      <!--
       <Dialog Id="MyExitDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
         <Control Id="Finish" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Cancel="yes" Text="!(loc.WixUIFinish)" />
         <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Disabled="yes" Text="!(loc.WixUICancel)" />
@@ -219,7 +234,7 @@
         <Control Id="LaunchCheckBox" Type="CheckBox" X="10" Y="243" Width="170" Height="17" Property="LAUNCHAPPONEXIT" Hidden="yes" CheckBoxValue="1" Text="Restart Classlib Service when setup exits.">
           <Condition Action="show">NOT Installed</Condition>
         </Control>
-      </Dialog>
+      </Dialog> -->
 
 
 
@@ -241,31 +256,40 @@
                   BinaryKey="setup_js"
                   JScriptCall="patchConfigFiles" />
 
- 
-    <CustomAction Id="stopClasslib" Property="classlib_service_restart.bat" ExeCommand=""/>
-    <CustomAction Id="startClasslib" Property="NETEXE" ExeCommand="start classlib"  />
+    <CustomAction Id="prepareRestartClasslib"
+              Return="check"
+              Property="restartClasslib"
+              Value="restart"/>
+
+    <CustomAction Id="restartClasslib" Execute="commit" Return="check"
+                  BinaryKey="setup_js"
+                  JScriptCall="restartClasslib"
+                  Impersonate="no" />
+
 
     <InstallExecuteSequence>
       <Custom Action="preparePatchConfigFiles" After="PatchFiles"/>
     </InstallExecuteSequence>
 
     <InstallExecuteSequence>
+      <RemoveExistingProducts After="InstallInitialize"/> <!-- required for Upgrade -->
       <Custom Action="patchConfigFiles" After="preparePatchConfigFiles">NOT Installed</Custom>
-      
+      <Custom Action="prepareRestartClasslib" Before="InstallFinalize" >LAUNCHAPPONEXIT</Custom>
+      <Custom Action="restartClasslib" After="prepareRestartClasslib">LAUNCHAPPONEXIT</Custom>
+
       <!-- Ask the user to reboot only if the value of the IDA_ROOT system environment variable changed  
            and only if running on Windows version less than 6.00. Starting with Windows Vista, a reboot is not
            required to receive the modified system environment variables in services processes.
            See also http://msdn.microsoft.com/en-us/library/aa370556(VS.85).aspx for a list of VersionNT values.
       -->
-      <Custom Action="RestartClasslib" After='InstallFinalize'>Installed AND NOT UPGRADINGPRODUCTCODE</Custom>
       <ScheduleReboot After='InstallFinalize'><![CDATA[(IDA_ROOT<>INSTALLLOCATION) AND (VersionNT<600)]]></ScheduleReboot>
     </InstallExecuteSequence>
-    <InstallUISequence>
+<!--    <InstallUISequence>
       <Show Dialog="MyExitDialog" OnExit="success" />
     </InstallUISequence>
 
     <AdminUISequence>
       <Show Dialog="MyExitDialog" OnExit="success" />
-    </AdminUISequence>
+    </AdminUISequence> -->
   </Product>
 </Wix>

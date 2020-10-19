@@ -1,5 +1,14 @@
 #ifndef IdaXmlHelper_h
 #define IdaXmlHelper_h
+//CB>-------------------------------------------------------------------
+//
+//   File:      IdaXmlHelper.h
+//   Revision:  1.1
+//   Date:      28-MAY-2010 10:54:03
+//
+//<CE-------------------------------------------------------------------
+
+static const char * SCCS_Id_IdaXmlHelper_h = " (#) IdaXmlHelper.h 1.1";
 
 #include <pcpdefs.h>
 #include <pcpstring.h>

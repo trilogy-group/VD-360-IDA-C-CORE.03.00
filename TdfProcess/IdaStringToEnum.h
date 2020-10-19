@@ -32,26 +32,11 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 //CB>---------------------------------------------------------------------------
 //
-//   File, Component, Release:
-//                  TdfProcessgencode.pl 1.0 12-APR-2008 18:52:13 DMSYS
-//
-//   File:      TdfProcessgencode.pl
-//   Revision:      1.0
-//   Date:          12-APR-2008 18:52:13
+//   File:          IdaStringToEnum.h
+//   Revision:      1.1
+//   Date:          01-JUN-2010 12:56:15
 //
 //   DESCRIPTION:
 //     
@@ -61,8 +46,7 @@
 //
 //<CE---------------------------------------------------------------------------
 
-static const char * SCCS_Id_IdaStringToEnum_h = "@(#) TdfProcessgencode.pl 1.0 12-APR-2008 18:52:13 DMSYS";
-
+static const char * SCCS_Id_IdaStringToEnum_h = "@(#) IdaStringToEnum.h 1.1";
 
 // You can not instanciate this class
 

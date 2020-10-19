@@ -1,3 +1,16 @@
+//CB>-------------------------------------------------------------------
+//
+//   File:      IdaXmlHelper.cc
+//   Revision:  1.1
+//   Date:      05-AUG-2010 11:45:51
+//
+//   DESCRIPTION:
+//      Do some standard xml stuff
+//
+//<CE-------------------------------------------------------------------
+
+static const char * SCCS_Id_IdaXmlHelper_cc = "@(#) IdaXmlHelper.cc 1.1";
+
 #include "IdaXmlHelper.h"
 #include <IdaDecls.h>
 #include <idatraceman.h>

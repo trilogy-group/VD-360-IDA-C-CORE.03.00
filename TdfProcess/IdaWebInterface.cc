@@ -1,14 +1,13 @@
 //CB>-------------------------------------------------------------------
 //
 //   File:      IdaWebInterface.cc
-//   Revision:  1.1
-//   Date:      29-SEP-2009 17:58:04
+//   Revision:  1.3
+//   Date:      28-MAY-2010 10:54:02
 //
 //   DESCRIPTION:
 //
-//
 //<CE-------------------------------------------------------------------
-static const char * SCCS_Id_IdaWebInterface_cc = "@(#) IdaWebInterface.cc 1.1";
+static const char * SCCS_Id_IdaWebInterface_cc = "@(#) IdaWebInterface.cc 1.3";
 
 #include <stdafx.h>
 #include <IdaDecls.h>

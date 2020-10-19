@@ -41,7 +41,8 @@ ENDSET
 WebInterfaceGroup
 SET
 BEGIN
-  web_interface_port = #@WEB_INTERFACE_PORT@   // TCP Portnummber
+//  web_interface_port = #5590                 // TCP port nummber for communication with ida servlets
+  web_interface_port = #@WEB_INTERFACE_PORT@   // TCP Portnummber for communication with ida servlets
 END
 ENDSET
 

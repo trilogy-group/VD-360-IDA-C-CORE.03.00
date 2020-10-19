@@ -3,23 +3,16 @@
 
 //CB>-------------------------------------------------------------------
 // 
-//   File, Component, Release:
-//                  IdaTdfChannelMgr.h 1.1
-// 
 //   File:      IdaTdfChannelMgr.h
 //   Revision:  1.1
-//   Date:      09-JAN-2009 09:42:55
+//   Date:      28-MAY-2010 10:53:59
 // 
 //   DESCRIPTION:
 //     Administration of TDF channels within IDA TDF client.
 //     
-//     
-//     
 //<CE-------------------------------------------------------------------
 
 static const char * SCCS_Id_IdaTdfChannelMgr_h = "@(#) IdaTdfChannelMgr.h 1.1";
-
-
 
 #include <pcpdefs.h>
 #include <vector.h>

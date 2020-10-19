@@ -17,8 +17,8 @@
 ########################################################################
 #
 #    File:         build.pl
-#    Revision:     1.3
-#    Version date: 28-OCT-2009 14:31:42
+#    Revision:     1.8
+#    Version date: 14-MAY-2012 16:54:16
 #
 ########################################################################
 #
@@ -131,65 +131,65 @@ sub initialize
      #
 	  # Remark: The file lists depend on the OS!
      if ($UNAME eq "AIX")
+     {
+       $HOSTNAME=`/bin/hostname`;
+       chomp $HOSTNAME;
+       $OSVERSION=`uname -v`;
+       chomp $OSVERSION;
+       $OSRELEASE=`uname -r`;
+       chomp $OSRELEASE;
+       if ( ($OSVERSION eq "5" && $OSRELEASE ne "2"))
        {
-	  $HOSTNAME=`/bin/hostname`;
-	  chomp $HOSTNAME;
-	  $OSVERSION=`uname -v`;
-	  chomp $OSVERSION;
-	  $OSRELEASE=`uname -r`;
-	  chomp $OSRELEASE;
-	  if ( ($OSVERSION eq "5" && $OSRELEASE ne "2"))
-	    {
 	       print "\nUnsupported operating system $UNAME$OSVERSION$OSRELEASE!\n";
 	       exit;
-	    }
-       }
+        }
+     }
      elsif ($UNAME eq "HP-UX")
-       {
-	  $HOSTNAME=`/bin/hostname`;
-	  chomp $HOSTNAME;
-	  $OSVERSION=`uname -r`;
-	  chomp $OSVERSION;
-	  $OSVERSION=~s/\w+\.(\d+)\..*/$1/;
-	  $OSRELEASE="";
-	  if ($OSVERSION ne "11")
+     {
+       $HOSTNAME=`/bin/hostname`;
+       chomp $HOSTNAME;
+       $OSVERSION=`uname -r`;
+       chomp $OSVERSION;
+       $OSVERSION=~s/\w+\.(\d+)\..*/$1/;
+       $OSRELEASE="";
+       if ($OSVERSION ne "11")
 	    {
 	       print "\nUnsupported operating system $UNAME$OSVERSION$OSRELEASE!\n";
 	       exit;
 	    }
-       }
+     }
      elsif ($UNAME eq "Linux" )
-       {
-	   my $versionStr = `grep VERSION /etc/SuSE-release`;
-	   $UNAME="SuSE-Linux";
-	   $HOSTNAME=`/bin/hostname`;
-	   chomp $HOSTNAME;
-	   $OSVERSION=`grep VERSION /etc/SuSE-release|cut -d '=' -f2|cut -d ' ' -f2|cut -d '.' -f1`;
-	   chomp $OSVERSION;
-	   if ( $versionStr =~ /\./ )
-	   {
+     {
+       my $versionStr = `grep VERSION /etc/SuSE-release`;
+       $UNAME="SuSE-Linux";
+       $HOSTNAME=`/bin/hostname`;
+       chomp $HOSTNAME;
+       $OSVERSION=`grep VERSION /etc/SuSE-release|cut -d '=' -f2|cut -d ' ' -f2|cut -d '.' -f1`;
+       chomp $OSVERSION;
+       if ( $versionStr =~ /\./ )
+	    {
 	       $OSRELEASE=`grep VERSION /etc/SuSE-release|cut -d '=' -f2|cut -d ' ' -f2|cut -d '.' -f2`;
 	       chomp $OSRELEASE;
-	   }
-	   print "Found $UNAME version: $OSVERSION.$OSRELEASE\n";
        }
-       elsif ($UNAME eq "CYGWIN")
-       {
-	  $UNAME="Windows";
-	  $HOSTNAME=`hostname`;
-	  chomp $HOSTNAME;
-	  $OSVERSION="2000";
-	  $OSRELEASE="";
-	  $devNull="null";
-       }
+       print "Found $UNAME version: $OSVERSION.$OSRELEASE\n";
+     }
+     elsif ($UNAME eq "CYGWIN")
+     {
+       $UNAME="Windows";
+       $HOSTNAME=`hostname`;
+       chomp $HOSTNAME;
+       $OSVERSION="2000";
+       $OSRELEASE="";
+       $devNull="null";
+     }
      
      else
-       {
-	  $HOSTNAME=`/usr/ucb/hostname`;
-	  chomp $HOSTNAME;
-	  $OSVERSION="undefined";
-	  $OSRELEASE="";
-       }
+     {
+       $HOSTNAME=`/usr/ucb/hostname`;
+       chomp $HOSTNAME;
+       $OSVERSION="undefined";
+       $OSRELEASE="";
+     }
 	 
 	  @LIBS=qw (libidatdf.a);
      @MODS=qw (IdaTdfProcess);
@@ -236,6 +236,8 @@ sub readBuildInfo
       {
         die "Can't read '$buildInfoFile'!";
       }
+
+    print ("Reading information from BuildInfo.xml ...\n");
 
     my $xmlBuildInfo;
     read ( INPUT, $xmlBuildInfo, -s INPUT);
@@ -313,6 +315,7 @@ sub readBuildInfo
     
     if ($UNAME eq "Windows")
       {
+        print "Generating windows resource file...\n";
         genResourceFile ( $softwareName, $buildId, $buildNo, $buildOs );
       } 
   }
@@ -1563,7 +1566,7 @@ BEGIN
             VALUE "FileDescription", VER_FILEDESCRIPTION
             VALUE "FileVersion", VER_VERSION_STR
             VALUE "InternalName", "IDA.03.00 \\0"
-            VALUE "LegalCopyright", "Copyright (c) $actYear by Volt Delta Intl.\\0"
+            VALUE "LegalCopyright", "Volt Delta International GmbH 1990-$actYear\\0"
             VALUE "OriginalFilename", VER_ORIGFILENAME
             VALUE "ProductName", "IDA\\0"
             VALUE "ProductVersion", VER_VERSION_STR

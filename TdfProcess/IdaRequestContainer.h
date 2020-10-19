@@ -3,22 +3,13 @@
 
 //CB>---------------------------------------------------------------------------
 // 
-//   File, Component, Release:
-//                  IdaRequestContainer.h 1.1
-// 
 //   File:      IdaRequestContainer.h
-//   Revision:  1.1
-//   Date:      09-JAN-2009 09:42:57
+//   Revision:  1.2
+//   Date:      28-MAY-2010 10:53:56
 // 
-//   DESCRIPTION:
-//
-//     
 //<CE---------------------------------------------------------------------------
 
-static const char * SCCS_Id_IdaRequestContainer_h = "@(#) IdaRequestContainer.h 1.1";
-
-
-
+static const char * SCCS_Id_IdaRequestContainer_h = "@(#) IdaRequestContainer.h 1.2";
 
 #include <pcpdefs.h>
 #include <pcptime.h>

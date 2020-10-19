@@ -1,15 +1,12 @@
 //CB>-------------------------------------------------------------------
 //
-//   File, Component, Release:
-//                  dat/ida.rtd, ypBase, IDA.01.02, 05
-//
-//   SCCSfile:      /home/wssrv/cmvcadm/vc/0/4/2/1/s.76
-//   Revision:      1.4
-//   Date:          96/08/08
+//   File:          ida.rtd
+//   Revision:      1.2
+//   Date:          01-JUN-2010 13:00:56
 //
 //   DESCRIPTION:
-//	report text definitions for the reports of IDA processes:
-//  	IDA_CGI_Process, IDA_Query_Manager, IDA_TDS_Client
+//	     report text definitions for the reports of IDA processes:
+//  	   IDA_CGI_Process, IDA_Query_Manager, IDA_TDS_Client
 //
 //<CE-------------------------------------------------------------------
 #220

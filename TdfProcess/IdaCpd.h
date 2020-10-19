@@ -3,18 +3,11 @@
 
 //CB>-------------------------------------------------------------------
 //
-//   File, Component, Release:
-//                  IdaCpd.h 1.1
-//
 //   File:      IdaCpd.h
 //   Revision:  1.1
-//   Date:      09-JAN-2009 09:42:55
-//
-//   DESCRIPTION:
-//
+//   Date:      28-MAY-2010 10:53:54
 //
 //<CE-------------------------------------------------------------------
-
 
 static const char * SCCS_Id_IdaCpd_h = "@(#) IdaCpd.h 1.1";
 

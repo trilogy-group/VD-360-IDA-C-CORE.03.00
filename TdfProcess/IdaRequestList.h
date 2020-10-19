@@ -3,22 +3,13 @@
 
 //CB>-------------------------------------------------------------------
 // 
-//   File, Component, Release:
-//                  IdaRequestList.h 1.1
-// 
 //   File:      IdaRequestList.h
 //   Revision:  1.1
-//   Date:      09-JAN-2009 09:42:57
-// 
-//   DESCRIPTION:
-//
+//   Date:      28-MAY-2010 10:53:57
 //
 //<CE-------------------------------------------------------------------
 
 static const char * SCCS_Id_IdaRequestList_h = "@(#) IdaRequestList.h 1.1";
-
-
-
 
 #include <map.h>
 #include <IdaRequestContainer.h>

@@ -1,21 +1,11 @@
 
 //CB>---------------------------------------------------------------------------
 //
-//   File, Component, Release:
-//                  IdaTdfProcessMain.cc 1.1
-//
 //   File:      IdaTdfProcessMain.cc
 //   Revision:  1.1
-//   Date:      09-JAN-2009 09:42:55
-//
-//   DESCRIPTION:
-//
-//
+//   Date:      28-MAY-2010 10:54:00
 //
 //<CE---------------------------------------------------------------------------
-
-
-
 
 static const char * SCCS_Id_IdaTdfProcessMain_cc = "@(#) IdaTdfProcessMain.cc 1.1";
 

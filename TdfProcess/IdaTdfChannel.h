@@ -3,12 +3,9 @@
 
 //CB>-------------------------------------------------------------------
 // 
-//   File, Component, Release:
-//                  IdaTdfChannel.h 1.1
-// 
 //   File:      IdaTdfChannel.h
 //   Revision:  1.1
-//   Date:      09-JAN-2009 09:42:56
+//   Date:      28-MAY-2010 10:53:58
 // 
 //   DESCRIPTION:
 //     Representation of one TDF channel within IDA TDF client.
@@ -17,9 +14,6 @@
 //<CE-------------------------------------------------------------------
 
 static const char * SCCS_Id_IdaTdfChannel_h = "@(#) IdaTdfChannel.h 1.1";
-
-
-
 
 #include <pcpdefs.h>
 #ifdef _HPUX_10

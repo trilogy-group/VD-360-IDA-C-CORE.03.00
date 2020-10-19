@@ -1,18 +1,13 @@
 
 //CB>---------------------------------------------------------------------------
 // 
-//   File, Component, Release:
-//                  IdaTdfChannelMgr.cc 1.1
-// 
 //   File:      IdaTdfChannelMgr.cc
 //   Revision:  1.1
-//   Date:      09-JAN-2009 09:42:57
+//   Date:      28-MAY-2010 10:53:59
 // 
 //   DESCRIPTION:
 //     TDF channel administration within IDA TDF client.
 //     
-//     
-//   
 //<CE---------------------------------------------------------------------------
 
 static const char * SCCS_Id_IdaTdfChannelMgr_cc = "@(#) IdaTdfChannelMgr.cc 1.1";

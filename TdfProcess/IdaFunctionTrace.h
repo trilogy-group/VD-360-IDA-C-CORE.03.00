@@ -3,22 +3,14 @@
 
 //CB>-------------------------------------------------------------------
 //
-//   File, Component, Release:
-//                  IdaFunctionTrace.h 1.1
-//
 //   File:      IdaFunctionTrace.h
 //   Revision:  1.1
-//   Date:      09-JAN-2009 09:42:55
-//
-//   DESCRIPTION:
-//
+//   Date:      28-MAY-2010 10:53:55
 //
 //<CE-------------------------------------------------------------------
 static const char * SCCS_Id_IdaFunctionTrace_h = "@(#) IdaFunctionTrace.h 1.1";
 
-
 #include <pcpstring.h>
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /**

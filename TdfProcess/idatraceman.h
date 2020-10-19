@@ -5,18 +5,15 @@
 //
 //   Author:        Sigrun Peters
 //
-//   File, Component, Release:
-//                  idatraceman.h 1.1
+//   File:      idatraceman.h
+//   Revision:  1.1
+//   Date:      28-MAY-2010 10:54:05
 //
 //   DESCRIPTION
 //            This is the old compatible traceapi for the new tracesystem
 //
-//   File:      idatraceman.h
-//   Revision:  1.1
-//   Date:      09-JAN-2009 09:42:58
-//
 //<CE-------------------------------------------------------------------CE>
-static const char * idatrace_h="@(#)  idatraceman.h 1.1";
+static const char * idatrace_h= "@(#) idatraceman.h 1.1";
 
 #include <pcpdefs.h>
 #ifndef CLASSLIB_03_00

@@ -58,3 +58,34 @@ function log(msg) {
   msgrec.StringData(1) = msg;
   Session.Message(msiMessageTypeInfo, msgrec);
 }
+
+/* 
+--------------------------------------------------------------------------
+Classlib start/restart
+-------------------------------------------------------------------------- 
+*/
+function restartClasslib() {
+    log("in restartClasslib");
+
+    try {
+        var shell = new ActiveXObject("WScript.Shell");
+        var cmd = "";
+        var installDir = Session.Property("CustomActionData");
+        var WindowStyleHidden = 0;
+        var waitForReturn = true;
+
+        // requires admin priviledges, e.g. CustomAction with impersonate=no
+        // cmd = "cmd /C \"" + installDir + "bin\\classlib_service_restart.bat\"";
+
+        cmd = "net stop classlib";
+        log("restartClasslib(): cmd is " + cmd);
+        shell.run(cmd, WindowStyleHidden, waitForReturn);
+        
+        cmd = "net start classlib";
+        log("restartClasslib(): cmd is " + cmd);
+        shell.run(cmd, WindowStyleHidden, waitForReturn);
+    }
+    catch (e) {
+        log("restartClasslib() exception caught: " + e.message);
+    }
+}

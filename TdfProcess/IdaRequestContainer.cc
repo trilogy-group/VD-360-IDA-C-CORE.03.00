@@ -1,21 +1,13 @@
 
 //CB>---------------------------------------------------------------------------
 // 
-//   File, Component, Release:
-//                  IdaRequestContainer.cc 1.1
-// 
 //   File:      IdaRequestContainer.cc
-//   Revision:  1.1
-//   Date:      09-JAN-2009 09:42:56
-// 
-//   DESCRIPTION:
-//     
-//     
-//     
+//   Revision:  1.2
+//   Date:      28-MAY-2010 10:53:55
 //   
 //<CE---------------------------------------------------------------------------
 
-static const char * SCCS_Id_IdaRequestContainer_cc = "@(#) IdaRequestContainer.cc 1.1";
+static const char * SCCS_Id_IdaRequestContainer_cc = "@(#) IdaRequestContainer.cc 1.2";
 
 #include <stdafx.h>
 
@@ -24,12 +16,9 @@ static const char * SCCS_Id_IdaRequestContainer_cc = "@(#) IdaRequestContainer.c
 #include <objectid.h>
 #include <IdaRequestContainer.h>
 
-
 #ifdef ALLOW_STDOUT
 	#define MONITORING
 #endif
-
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //

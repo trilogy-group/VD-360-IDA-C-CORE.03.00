@@ -1,23 +1,13 @@
 
 //CB>---------------------------------------------------------------------------
 // 
-//   File, Component, Release:
-//                  IdaRequestList.cc 1.1
-// 
 //   File:      IdaRequestList.cc
-//   Revision:  1.1
-//   Date:      09-JAN-2009 09:42:58
-// 
-//   DESCRIPTION:
-//     
-//     
+//   Revision:  1.2
+//   Date:      28-MAY-2010 10:53:56
 //   
 //<CE---------------------------------------------------------------------------
 
-static const char * SCCS_Id_IdaRequestList_cc = "@(#) IdaRequestList.cc 1.1";
-
-
-
+static const char * SCCS_Id_IdaRequestList_cc = "@(#) IdaRequestList.cc 1.2";
 
 #include <map.h>
 #include <pcpdefs.h>
@@ -29,7 +19,6 @@ static const char * SCCS_Id_IdaRequestList_cc = "@(#) IdaRequestList.cc 1.1";
 #ifdef ALLOW_STDOUT
 	#define MONITORING
 #endif
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //

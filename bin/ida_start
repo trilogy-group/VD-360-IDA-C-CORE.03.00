@@ -1,24 +1,13 @@
 #!/bin/ksh
 
-#/*CB>---------------------------------------------------------------------
+#---------------------------------------------------------------------
 #
-#File, Component, Release:
-#		bin\ida_start 1.0 12-APR-2008 18:52:12 DMSYS
-#
-#File:      bin\ida_start
-#Revision:      1.0
-#Date:          12-APR-2008 18:52:12
-#
-#Systemab.:
-#
-#DESCRIPTION:
+#    File:         ida_start
+#    Revision:     1.1
+#    Version date: 28-MAY-2010 10:54:05
 #
 #--------------------------------------------------------------------------
-#<CE*/
 #
-#SCCS_Id = "(#) bin\ida_start 1.0 12-APR-2008 18:52:12 DMSYS"
-
-
 ########################################################################
 #
 #  ida_start.tpl   --   Start the product in the classlib system

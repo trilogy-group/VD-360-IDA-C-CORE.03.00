@@ -3,21 +3,17 @@
 
 //CB>-------------------------------------------------------------------
 //
-//   File, Component, Release:
-//                  IdaWebInterface.h 1.1
-//
 //   File:      IdaWebInterface.h
-//   Revision:  1.1
-//   Date:      09-JAN-2009 09:42:57
+//   Revision:  1.3
+//   Date:      28-MAY-2010 10:54:02
 //
 //   DESCRIPTION:
 //     IDA.plus Web interface.
 //     WebInterface is derived from Process.
 //
-//
 //<CE-------------------------------------------------------------------
 
-static const char * SCCS_Id_IdaWebInterface_h = "@(#) IdaWebInterface.h 1.1";
+static const char * SCCS_Id_IdaWebInterface_h = "@(#) IdaWebInterface.h 1.3";
 
 #include <pcpdefs.h>
 #include <pcpstring.h>

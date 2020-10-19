@@ -1,3 +1,13 @@
+//CB>-------------------------------------------------------------------
+//
+//   File:      IdaWebConnection.h
+//   Revision:  1.3
+//   Date:      28-MAY-2010 10:54:02
+//
+//<CE-------------------------------------------------------------------
+
+static const char * SCCS_Id_IdaWebConnection_h = "@(#) IdaWebConnection.h 1.3";
+
 #ifndef IdaWebConnection_h
 #define IdaWebConnection_h
 

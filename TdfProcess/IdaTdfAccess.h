@@ -4,16 +4,12 @@
 //CB>-------------------------------------------------------------------
 //
 //   File:      IdaTdfAccess.h
-//   Revision:  1.1
-//   Date:      28-MAY-2010 10:53:58
-//
-//   DESCRIPTION:
-//
+//   Revision:  1.3
+//   Date:      01-JUN-2010 12:50:08
 //
 //<CE-------------------------------------------------------------------
 
-static const char * SCCS_Id_IdaTdfAccess_h = " (#) IdaTdfAccess.h 1.1";
-
+static const char * SCCS_Id_IdaTdfAccess_h = " (#) IdaTdfAccess.h 1.3";
 
 #include <pcpdefs.h>
 #include <pcpstring.h>
@@ -64,7 +60,10 @@ class TdfAccess : public TdfClient, public PcpTimerInterface
 
     WebInterface& _webInterface;
 	
-	
+#ifdef _WINDOWS  
+    HRESULT m_hr;
+#endif
+
 		// -------------------------------------------------------------------------
 		// Konstruktor / Destruktor
 		// -------------------------------------------------------------------------
