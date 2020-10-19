@@ -19,12 +19,13 @@
 TdfProcessGroup 
 SET
 BEGIN
-  dbid = #1				                      // Database identification number
-  dbserver_objectid = #@DB_OID@         // Database object id
+  dbid = #1				                     // Database identification number
+  dbserver_objectid = #@DB_OID@              // Database object id
   service_name = "@SERVICE_NAME@"
   application_name = "360 Web"
   nrof_channels = #20
-  osa_ticket = "${IDA_OSA_TICKET}" 			// default is to replace IDA_OSA_TICKET by osaTicket.cfg
+  osa_ticket = "${IDA_OSA_TICKET}" 			// default is to set env $IDA_OSA_TICKET 
+                                            // to the osa ticket file in the servlet config (including path)
 END
 ENDSET
 // -------------------------------------------------------------------------------

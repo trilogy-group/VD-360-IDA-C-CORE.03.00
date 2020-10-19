@@ -10,7 +10,10 @@ LIBSRCS=IdaTdfChannel \
 	IdaRequestList \
 	IdaStringToEnum \
 	IdaTdfAccess \
-   IdaTdfProcess
+        IdaTdfProcess \
+	IdaWebConnection \
+        IdaWebInterface \
+        IdaXmlHelper
 
 LIBNAME=libidatdf
 
@@ -30,7 +33,7 @@ $(MK_REL_BINPATH)/IdaTdfProcess$(EXE): $(PLATFORMDIR)/IdaTdfProcessMain.o
 	tdsearch.lib apibase.lib $(OBJCOMLIBS) $(NETLIBS)
 else
 $(MK_REL_BINPATH)/IdaTdfProcess$(EXE): $(PLATFORMDIR)/IdaTdfProcessMain.o	
-	$(LINKOPS) -lidabase -lidatdf -ltdframe -ltdsearch \
+	$(LINKOPS) -lidatdf -ltdframe -ltdsearch \
 	-lapibase -lseslogin $(OBJCOMLIBS) $(NETLIBS)
 endif
 

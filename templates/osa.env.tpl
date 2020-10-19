@@ -25,7 +25,7 @@ export CL_NET_FILE="${CL_WORKDIR_PATH}/config/netprocess.par"
 export CL_ROUTER_FILE="${CL_WORKDIR_PATH}/config/routertable.par"
 export CL_ROUTER_OID=1000001
 export CL_SVID_MAP_FILE="${CL_WORKDIR_PATH}/config/svidmapping.par"
-
+export IDA_OSA_TICKET="${IDA_SERVLET_WORKDIR_PATH}/osaTicket.cfg"
 
 #########################
 # important for HP-UX

@@ -41,7 +41,7 @@ public:
 private:
   ReturnStatus handleEvent(PcpReturnEvent & event);
 
-  Void WebConnection::timerBox(const RefId id);
+  Void timerBox(const RefId id);
 };
 
 #endif // IdaWebConnection_h

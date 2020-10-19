@@ -24,19 +24,14 @@ static const char * SCCS_Id_IdaWebInterface_h = "@(#) IdaWebInterface.h 1.1";
 #include <pcpprocess.h>
 #include <pcptime.h>
 #include <vector.h>
+#include <map.h>
 #include <toolbox.h>
 #include <reporterclient.h>
 #include <comman.h>
 #include <IdaTypes.h>
-# ifndef CLASSLIB_03_00
-  #include <comman.h> 
-  #include <eventdispatcher.h>
-  #include <eventdispatchable.h>
-# else
   #include <sys/commannorouter.h>
   #include <pcpeventdispatcher.h>
   #include <pcpeventhandler.h>
-# endif
 #include <dispatchable.h>
 #include <message.h>
 #include <signal.h>
@@ -49,11 +44,7 @@ class ComMan;
 class EventDispatcher;
 class WebConnection;
 
-#ifdef CLASSLIB_03_00
 class WebInterface : public PcpEventHandler
-#else
-class WebInterface : public EventDispatchable
-#endif
 {
 
 public :
@@ -118,7 +109,7 @@ private :
 			nur beim ersten Aufruf tatsächlich geholt */
 		static ReporterClient* reporter();
 
-    typedef std::map<PcpHandle, WebConnection*> WebConnections;
+    typedef s_map<PcpHandle, WebConnection*> WebConnections;
     WebConnections _connections;
     WebConnection* findConnectionByRequestId( UShort requestId ) const;
 
