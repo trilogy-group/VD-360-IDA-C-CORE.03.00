@@ -1,15 +1,15 @@
 //CB>-------------------------------------------------------------------
 //
 //   File:      IdaXmlHelper.cc
-//   Revision:  1.1
-//   Date:      05-AUG-2010 11:45:51
+//   Revision:  1.2
+//   Date:      11-AUG-2010 15:41:30
 //
 //   DESCRIPTION:
 //      Do some standard xml stuff
 //
 //<CE-------------------------------------------------------------------
 
-static const char * SCCS_Id_IdaXmlHelper_cc = "@(#) IdaXmlHelper.cc 1.1";
+static const char * SCCS_Id_IdaXmlHelper_cc = "@(#) IdaXmlHelper.cc 1.2";
 
 #include "IdaXmlHelper.h"
 #include <IdaDecls.h>
@@ -71,7 +71,10 @@ ReturnStatus XmlHelper::createXmlNode(String& xmlString, const String& tag, cons
 	xmlString.cat(tagEnd);
 
 	// an dieser Stelle muessen wir einige Zeichen maskieren
-	Int saveCounter = 255;
+
+        // DE_MR_5606, cp, 2010-08-05: increased saveCounter
+	// Int saveCounter = 255;
+	Int saveCounter = 2048;
 	for (char* value = (char *)val; *value; value++)
 	{
 		switch (*value)

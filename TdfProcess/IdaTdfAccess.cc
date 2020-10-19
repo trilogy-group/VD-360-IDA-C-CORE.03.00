@@ -1,12 +1,12 @@
 //CB>-------------------------------------------------------------------
 //
 //   File:      IdaTdfAccess.cc
-//   Revision:  1.6
-//   Date:      04-AUG-2010 15:59:15
+//   Revision:  1.7
+//   Date:      11-AUG-2010 15:41:30
 //
 //<CE-------------------------------------------------------------------
 
-static const char * SCCS_Id_TdfAccess_cc = "@(#) IdaTdfAccess.cc 1.6";
+static const char * SCCS_Id_TdfAccess_cc = "@(#) IdaTdfAccess.cc 1.7";
 
 #include <stdafx.h>
 #include <IdaDecls.h>
@@ -2144,26 +2144,34 @@ Void TdfAccess::dataToHexString(String byteSequence, String& result)
   TRACE_FUNCTION("TdfAccess::dataToHexString(...)");
   //idaTrackTrace(("TdfAccess::dataToHexString(...)"));
 
-  const Uint buflen = 264;
-  char buf[265];  // +1: including 0 as end of string
+// DE_MR_5606, cp, 2010-08-04
+// increase buffer length
+  const Uint buflen = 2048;
+  char buf[buflen];
+
+  idaTrackTrace(("TdfAccess: byteSequence.len() = %d", byteSequence.len()));
 
   Uint pos=0;
-  for (UInt h = 0; h < byteSequence.len(); h ++)
+  for (UInt h = 0; h < byteSequence.len(); h++)
   {
     sprintf(buf+pos, "%02X", (unsigned int) (unsigned char) byteSequence[h]);
     pos = pos + 2;
 
     if( pos == buflen )
     {
+      idaTrackTrace(("TdfAccess: pos=buflen= %d", pos));
       buf[pos] = '\0';
       result += String(buf);
       pos = 0;
     }
   }
-
+ 
+  idaTrackTrace(("TdfAccess: pos=%d", pos));
   buf[pos] = '\0';
   result += String(buf);
 
+  idaTrackTrace(("TdfAccess: buf = %s", buf));
+  idaTrackTrace(("TdfAccess: result = %s", result.cString()));
 }
 
 
@@ -3075,7 +3083,6 @@ Data& TdfAccess::hexToData(const char * hex)
 {
   TRACE_FUNCTION("TdfAccess::hexToData(...)");
   //idaTrackTrace(("TdfAccess::hexToData(...)"));
-
 
   // Buffer zurücksetzen
   tempData.reset();
