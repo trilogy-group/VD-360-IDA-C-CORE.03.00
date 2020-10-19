@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?define Manufacturer="Volt Delta"?>
+<?define ProductName="IDA"?>
+<?define ProductVersion="03.00"?>
+<?define ConfigDir="..\config\"?>
+<?define DatDir="..\dat\"?>
+<?define ModulesDir="..\Windows2000\modules\"?>
+<?define TemplatesDir="..\templates\"?>
+<?define DefaultWebInterfacePort="5590"?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="f08157fb-ed76-4258-9114-499a535d1949" Name="$(var.Manufacturer) $(var.ProductName) $(var.ProductVersion)" 
+           Language="1033" Version="$(var.ProductVersion).00.00" Manufacturer="$(var.Manufacturer)" 
+           UpgradeCode="384a6943-93c2-47be-946c-5cd82c40c787">
+    <Package InstallerVersion="200" Compressed="yes" />
+    <Property Id="WEB_INTERFACE_PORT" Value="$(var.DefaultWebInterfacePort)"/>
+
+    <!-- Get current value of CL_ROOT_PATH system environment variable -->
+    <Property Id="CL_ROOT_PATH" Secure="yes">
+      <RegistrySearch Id="env.CL_ROOT_PATH" Root="HKLM" Key="SYSTEM\CurrentControlSet\Control\Session Manager\Environment" Name="CL_ROOT_PATH" Type="raw"/>
+    </Property>
+    
+    <!-- Get current value of IDA_ROOT system environment variable -->
+    <Property Id="IDA_ROOT" Secure="yes">
+      <RegistrySearch Id="env.IDA_ROOT" Root="HKLM" Key="SYSTEM\CurrentControlSet\Control\Session Manager\Environment" Name="IDA_ROOT" Type="raw"/>
+    </Property>
+
+    <Media Id="1" Cabinet="ida.cab" EmbedCab="yes" />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="ManufacturerFolder" Name="$(var.Manufacturer)">
+          <Directory Id="INSTALLLOCATION" Name="$(var.ProductName)">
+            <Directory Id="config" Name="config">
+              <Component Id="ida.par" Guid="dc9cdd09-afee-46c5-80df-d7da0dd44bc0">
+                <File Name="ida.par" Source="$(var.TemplatesDir)ida.par.tpl" KeyPath="yes"/>
+                <Environment Id="env.IDA_ROOT" Action="set" Name="IDA_ROOT" System="yes" Value="[INSTALLLOCATION]"/>
+              </Component>
+              <Component Id="idaprocs.par" Guid="b6804485-6c6f-4518-888c-d8b227a11a83">
+                <File Name="idaprocs.par" Source="$(var.TemplatesDir)idaprocs.par.tpl" KeyPath="yes"/>
+              </Component>
+            </Directory>
+            <Directory Id="dat" Name="dat">
+              <Component Id="ida.rtd" Guid="5a2070e0-47eb-4f44-8440-eac022193716">
+                <File Name="ida.rtd" Source="$(var.DatDir)ida.rtd" KeyPath="yes"/>
+              </Component>
+            </Directory>
+            <Directory Id="log" Name="log">
+              <Component Id="log.dir" Guid="9df3bd47-a020-464a-bfe3-2cd3e27fcd02">
+                <CreateFolder />
+              </Component>
+            </Directory>
+            <Directory Id="modules" Name="modules">
+              <Component Id="IdaTdfProcess.exe" Guid="4cca1ba9-2906-4f8b-aa84-43e178d5ddf4">
+                <File Source="$(var.ModulesDir)IdaTdfProcess.exe" KeyPath="yes"/>
+                <CreateFolder Directory="log"/>
+                <ServiceControl Id="RestartClasslib" Name="classlib" Start="both" Stop="both"/>
+              </Component>
+              <Component Id="classlib.dll" Guid="eb64bfcd-af50-4f4e-a781-9c74241f91b7">
+                <File Source="$(var.ModulesDir)classlib.dll" KeyPath="yes"/>
+              </Component>
+              <Component Id="osaapi.dll" Guid="c9d15260-0819-4a37-adcb-e5f954ff0cef">
+                <File Source="$(var.ModulesDir)osaapi.dll" KeyPath="yes"/>
+              </Component>
+            </Directory>
+          </Directory>
+        </Directory>
+      </Directory>
+      
+      <!-- Install ida_reporter.par to ${CL_ROOT_PATH}\config -->
+      <Directory Id="CL_ROOT_PATH">
+        <Directory Id="CL_ROOT_PATH.config" Name="config">
+          <Component Id="ida_reporter.par" Guid="cd127432-f2a7-4bfc-8abb-90edb4f203de">
+            <File Name="ida_reporter.par" Source="$(var.TemplatesDir)ida_reporter.par.tpl" KeyPath="yes"/>
+          </Component>
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <Feature Id="ProductFeature" Title="$(var.ProductName)" Level="1">
+      <!-- config -->
+      <ComponentRef Id="ida.par" />
+      <ComponentRef Id="idaprocs.par" />
+      
+      <!-- dat -->
+      <ComponentRef Id="ida.rtd"/>
+      
+      <!-- log -->
+      <ComponentRef Id="log.dir"/>
+      
+      <!-- modules -->
+      <ComponentRef Id="IdaTdfProcess.exe" />
+      <ComponentRef Id="classlib.dll" />
+      <ComponentRef Id="osaapi.dll" />
+      
+      <!-- ${CL_ROOT_PATH}\config -->
+      <ComponentRef Id="ida_reporter.par" />
+    </Feature>
+
+    <UIRef Id="WixUI_Common" />
+
+    <UI>
+      <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
+      <TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
+      <TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="12" />
+      <TextStyle Id="WixUI_Font_Title" FaceName="Tahoma" Size="9" Bold="yes" />
+
+      <Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION" />
+      <Property Id="ARPNOMODIFY" Value="1" />
+
+      <DialogRef Id="BrowseDlg" />
+      <DialogRef Id="DiskCostDlg" />
+      <DialogRef Id="ErrorDlg" />
+      <DialogRef Id="FatalError" />
+      <DialogRef Id="FilesInUse" />
+      <DialogRef Id="MsiRMFilesInUse" />
+      <DialogRef Id="PrepareDlg" />
+      <DialogRef Id="ProgressDlg" />
+      <DialogRef Id="ResumeDlg" />
+      <DialogRef Id="UserExit" />
+
+      <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="LicenseAgreementDlg">1</Publish>
+      <Publish Dialog="LicenseAgreementDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
+      <Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog" Value="PortNumberDlg">1</Publish>
+
+      <Publish Dialog="PortNumberDlg" Control="Back" Event="NewDialog" Value="LicenseAgreementDlg">1</Publish>
+      <Publish Dialog="PortNumberDlg" Control="Next" Event="NewDialog" Value="InstallDirDlg">1</Publish>
+
+      <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="PortNumberDlg">1</Publish>
+      <Publish Dialog="InstallDirDlg" Control="Next" Event="SetTargetPath" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
+      <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="2">1</Publish>
+      <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Property="_BrowseProperty" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
+      <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Event="SpawnDialog" Value="BrowseDlg" Order="2">1</Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="InstallDirDlg" Order="1">NOT Installed</Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="2">Installed</Publish>
+
+      <Publish Dialog="MaintenanceWelcomeDlg" Control="Next" Event="NewDialog" Value="MaintenanceTypeDlg">1</Publish>
+      <Publish Dialog="MaintenanceTypeDlg" Control="RepairButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+      <Publish Dialog="MaintenanceTypeDlg" Control="RemoveButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+      <Publish Dialog="MaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg">1</Publish>
+
+      <Dialog Id="PortNumberDlg" Width="370" Height="270" Title="[ProductName] Setup">
+        <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Port Number" />
+        <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="Enter the port number" />
+        <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="!(loc.InstallDirDlgBannerBitmap)" />
+        <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+
+        <Control Id="DatabaseObjectIdLabel" Type="Text" X="20" Y="60" Width="290" Height="13" Text="&amp;Database Object Id:" />
+        <Control Id="DatabaseObjectId" Type="Edit" X="20" Y="72" Width="320" Height="18" Property="DB_OID" Text="[DB_OID]"/>
+
+        <Control Id="ServiceNameLabel" Type="Text" X="20" Y="100" Width="290" Height="13" Text="&amp;Service Name:" />
+        <Control Id="ServiceName" Type="Edit" X="20" Y="112" Width="320" Height="18" Property="SERVICE_NAME" Text="[SERVICE_NAME]"/>
+
+        <Control Id="WebInterfacePortLabel" Type="Text" X="20" Y="140" Width="290" Height="13" Text="&amp;Web Interface Port:" />
+        <Control Id="WebInterfacePort" Type="Edit" X="20" Y="152" Width="320" Height="18" Property="WEB_INTERFACE_PORT" Text="[WEB_INTERFACE_PORT]"/>
+
+        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="&amp;Next">
+          <Condition Action="disable"><![CDATA[SERVICE_NAME="" OR SERVICE_NAME=""]]></Condition>
+          <Condition Action="enable"><![CDATA[NOT(SERVICE_NAME="" OR SERVICE_NAME="")]]></Condition>
+        </Control>
+        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="&amp;Back" />
+        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel">
+          <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+        </Control>
+      </Dialog>
+    </UI>
+    <WixVariable Id="WixUIBannerBmp" Value="Resources\bannrbmp.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="Resources\dlgbmp.bmp" />
+    <WixVariable Id="WixUILicenseRtf" Value="Resources\License.rtf" />
+
+    <Binary Id="setup_js" SourceFile="scripts/setup.js" />
+
+    <CustomAction Id="preparePatchConfigFiles"
+                  Return="check"
+                  Property="patchConfigFiles"
+                  Value="[INSTALLLOCATION];[DB_OID];[SERVICE_NAME];[WEB_INTERFACE_PORT]"/>
+
+    <CustomAction Id="patchConfigFiles"
+                  Execute="deferred"
+                  Return="check"
+                  BinaryKey="setup_js"
+                  JScriptCall="patchConfigFiles" />
+    
+    <InstallExecuteSequence>
+      <Custom Action="preparePatchConfigFiles" After="PatchFiles"/>
+    </InstallExecuteSequence>
+
+    <InstallExecuteSequence>
+      <Custom Action="patchConfigFiles" After="preparePatchConfigFiles">NOT Installed</Custom>
+      
+      <!-- Ask the user to reboot only if the value of the IDA_ROOT system environment variable changed -->
+      <ScheduleReboot After='InstallFinalize'><![CDATA[IDA_ROOT<>INSTALLLOCATION]]></ScheduleReboot>
+    </InstallExecuteSequence>
+  
+</Product>
+</Wix>
