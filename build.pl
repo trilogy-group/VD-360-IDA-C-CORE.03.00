@@ -28,7 +28,6 @@
 use XML::Simple; # qw(:strict);
 use Data::Dumper;
 
-  
 initialize();
 setLogFileName();
 
@@ -38,6 +37,7 @@ createStructure();
 my $pool;
 my $scriptpool;
 my $scriptExt;
+my $projectId="IDA-C-CORE.03.00";
 
 if ($UNAME ne "Windows")
   {
@@ -191,9 +191,9 @@ sub initialize
 	  $OSRELEASE="";
        }
 	 
-	  @LIBS=qw (libidabase.a libidatdf.a libidaweb.a);
-     @MODS=qw (IdaTdfProcess IdaWebProcess);
-	  @UNITS=qw (Base WebProcess TdfProcess);
+	  @LIBS=qw (libidatdf.a);
+     @MODS=qw (IdaTdfProcess);
+	  @UNITS=qw (TdfProcess);
 	  		 
   }
 
@@ -222,8 +222,6 @@ sub readBuildInfo
       {
         print "BuildInfo.xml missing, please enter build id: ";
         $response=<STDIN>;
-        $projectId = "IDA-C-CORE.03.00";
-        $ENV{'DM_ROOT'}="/opt/serena/dimensions/10.1/cm";
         print "executing: $scriptpool/dimensions/getBuildInfoForBI.$scriptext $projectId $response\n";
         system ("$scriptpool/dimensions/getBuildInfoForBI.$scriptext $dbName $projectId $response" );
         print ( "copying BuildInfo.xml to $PLATFORMDIR/BuildInfo.xml\n" );
@@ -248,6 +246,7 @@ sub readBuildInfo
 
     my $buildId =  $buildInfo->{Software}->{'bi:buildId'};
     $ENV{'BUILD_ID'}=$buildId;
+    my $softwareName =  $buildInfo->{Software}->{'bi:softwareName'};
     my $buildNo;
     my $buildOs;
     ($buildNo,$buildOs) = split ( /\./, $buildId );
@@ -311,6 +310,11 @@ sub readBuildInfo
             $ENV{'XERCESHOME'}="$pool/".$extlib->{'bi:name'}."/" . $extlib->{'bi:version'};
           }
       }
+    
+    if ($UNAME eq "Windows")
+      {
+        genResourceFile ( $softwareName, $buildId, $buildNo, $buildOs );
+      } 
   }
 
 sub getArguments
@@ -1486,5 +1490,93 @@ sub makereleaseinfo
   }
 
 	  
-	  
+sub genResourceFile ()
+  {
+    # parameters
+    my $softwareName = shift;
+    my $buildId      = shift;
+    my $buildNo      = shift;
+    my $buildOs      = shift;
+
+    my $rcFileName="TdfProcess/IdaTdfProcess.rc";
+
+    my @actTime=();
+    my $buildDate="";
+    my $minorRelease="";
+    my $majorRelease="";
+    my $actYear="";
+       
+
+    # relevant build information on version etc. is retrieved from BuildInfo.xml
+
+    # Calculate major and minor release...
+    my @projectIdParts = split (/\./,$projectId);
+    $majorRelease=$projectIdParts[1];
+    $minorRelease=$projectIdParts[2];
+
+    $majorRelease=~ s/^0//;
+    $minorRelease=~ s/^0//;
+     
+    # Get the build date (= days after 01/01)
+    @actTime= localtime();
+
+    $actYear= $actTime[5]+1900;
+
+    # Create version file
+    $check= open (RCFILE,">./$rcFileName");
+    if (!$check)
+      {
+        print "Fatal error: Couldn't open $rcFileName to write the rc information\n";
+        return 1;
+      }
+    else
+       {
+        print "Generating Resource File\n";
+      }
+    
+    print RCFILE <<EOF;
+#ifdef _DEBUG
+#define VER_FILEDESCRIPTION "$softwareName Debug\\0"
+#define VER_ORIGFILENAME "IdaTdfProcess.exe\\0"
+#else
+#define VER_FILEDESCRIPTION  "$softwareName \\0"
+#define VER_ORIGFILENAME "IdaTdfProcess.exe\\0"
+#endif
+
+#define VER_VERSION $majorRelease,$minorRelease,$buildNo,$buildOs
+#define VER_VERSION_STR "$majorRelease.$minorRelease.$buildId\\0"
+
+1 VERSIONINFO
+FILEVERSION VER_VERSION
+PRODUCTVERSION VER_VERSION
+FILEFLAGSMASK 0x3fL
+FILEFLAGS 0x0L
+FILEOS 0x4L
+FILETYPE 0x2L
+FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName", "Volt Delta Intl. GmbH \\0"
+            VALUE "FileDescription", VER_FILEDESCRIPTION
+            VALUE "FileVersion", VER_VERSION_STR
+            VALUE "InternalName", "IDA.03.00 \\0"
+            VALUE "LegalCopyright", "Copyright (c) $actYear by Volt Delta Intl.\\0"
+            VALUE "OriginalFilename", VER_ORIGFILENAME
+            VALUE "ProductName", "IDA\\0"
+            VALUE "ProductVersion", VER_VERSION_STR
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+      END
+EOF
+
+     close (RCFILE);
+}
+
 	  
