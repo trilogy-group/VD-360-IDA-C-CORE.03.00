@@ -5,19 +5,19 @@
     <ProductVersion>3.0</ProductVersion>
     <ProjectGuid>{a6354e46-8012-449c-9ea9-fc5d31cf5759}</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>ida-03.00</OutputName>
+    <OutputName>ida.03.00</OutputName>
     <OutputType>Package</OutputType>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.0\Wix.targets</WixTargetsPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.0\Wix.targets</WixTargetsPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <OutputPath>..\Windows2000\bindeb\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
     <DefineConstants>Debug</DefineConstants>
     <LinkerAdditionalOptions>-ext WixUIExtension</LinkerAdditionalOptions>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <OutputPath>..\Windows2000\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
     <LinkerAdditionalOptions>-ext WixUIExtension</LinkerAdditionalOptions>
   </PropertyGroup>

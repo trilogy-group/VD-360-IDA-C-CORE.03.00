@@ -31,13 +31,13 @@ use Data::Dumper;
 my $referencebasepath="/__notinitialized";
 
 my $platformpath="/__notinitialized";
-my $buildid="/__notinitialized";
+my $buildId="/__notinitialized";
 my $deliverypath="/__notinitialized";       # path where delivery files are collected;
 my $deliverybasepath="/__notinitialized";   # path (without os) where delivery files are collected;
 my $operatingsystem="/__notinitialized";
 my $osname="/__notinitialized";
 my $err;
-my $referencebasepath="/qadelivery/irfa/ida/02.20";
+my $referencebasepath="/qadelivery/irfa/ida/03.00";
 
 #
 # begin of main script
@@ -52,7 +52,7 @@ print "\n";
 
 getprojectnameandreferencepath ();
 selectsourcedirectory ();   # get operating system 
-getbuildid ();         # read the number of the rtl to be delivered
+getbuildId ();         # read the number of the rtl to be delivered
 checktargetdirectory ();    # check if targetdirectory (in qadelivery) is empty 
 
 getdeliverybasepath ();     # get the temporary directory where the delivery files are to be collected
@@ -71,8 +71,6 @@ print "\n";
 print "***** runtime level delivery finished\n";
 print"\n";
 
-
-
 sub selectsourcedirectory
 {
     my $answer;
@@ -81,8 +79,8 @@ sub selectsourcedirectory
     # select operating system 
     #
     
-    print ">>>>>: Operating system :\n";
-    print " 'aix4.3.3'\n 'aix5.2'\n 'hpux10.20'\n 'hpux11.11'\n 'hpux11.0'\n 'linux9.1'\n 'linux10.2'\n 'SLES10'\n ";
+    print "INPUT: Operating system :\n";
+    print " 1 win\n 2 aix5.2\n 4 hpux11.11\n 7 SLES10\n ";
 
     while ( ! $found )
       {
@@ -90,19 +88,30 @@ sub selectsourcedirectory
         $answer=<STDIN>;
         chomp($answer);
 
-        if ( $answer eq "aix5.2" )
+        if ( $answer eq "win" || $answer eq "1" )
+          { # 1
+            $platformpath="Windows2000";
+            $osname="Windows 2000/XP";
+            $operatingsystem="windows";
+            $found = 1;
+          }
+        elsif ( $answer eq "aix5.2" || $answer eq "2"  )
           { # 2
             $platformpath="AIX52";
             $osname="AIX 5.2";
             $operatingsystem="aix5.2";
             $found = 1;
+            $shlibext=".a";
+            $shlinklibext="25$shlibext";
           }
-        elsif ( $anser eq "hpux11.11")
+        elsif ( $anser eq "hpux11.11"  || $answer eq "4" )
           { # 4
             $platformpath="HP-UX11";
             $osname="HP-UX 11.11";
             $operatingsystem="hpux11.11";
             $found = 1;
+            $shlibext=".sl";
+            $shlinklibext="$shlibext.25";
           }
         elsif ( $answer eq "hpux11.0" )
           {
@@ -111,13 +120,15 @@ sub selectsourcedirectory
             $operatingsystem="hpux11.0";
             $found = 1;
           }
-        elsif ( $answer eq "SLES10" )
+        elsif ( $answer eq "SLES10" || $answer eq "7" )
           { # 7
             $platformpath="SuSE-Linux10";
             $osname="SLES 10";
-            $operatingsystem="linux10";
+            $operatingsystem="sles10";
             $linux="true";
             $found = 1;
+            $shlibext=".so";
+            $shlinklibext="$shlibext.27";
           }
       }
 }
@@ -129,10 +140,10 @@ sub getprojectnameandreferencepath
 }
 
 
-sub getbuildid
+sub getbuildId
 {
   #
-  # selection of the buildid should work automatically
+  # selection of the buildId should work automatically
   # read it from BuildInfo.xml
   #
   my $buildInfoFile="$platformpath/BuildInfo.xml";
@@ -148,13 +159,12 @@ sub getbuildid
 
   my $buildInfo = XMLin($xmlBuildInfo, 'KeyAttr' => [ ]);
 
-  my $buildId =  $buildInfo->{Software}->{'bi:buildId'};
+  $buildId =  $buildInfo->{Software}->{'bi:buildId'};
   my $buildNo;
   my $buildOs;
   ($buildNo,$buildOs) = split ( /\./, $buildId );
     print "Current OS: $platformpath and buildOs Number from buildId $buildId is $buildOs\n";
 
-  $buildid=$buildId;
 }
 
 
@@ -192,17 +202,17 @@ sub checktargetdirectory
   #    
   # check if there is an appropriate target directory in the /reference tree
   #
-  $referencepath = "$referencebasepath/$buildid";
+  $referencepath = "$referencebasepath/$buildId";
   
   if ( (-e "$referencepath/BuildInfo.xml") )
     {
-      print "INFO : runtime level $buildid probably already delivered\n";
+      print "INFO : runtime level $buildId probably already delivered\n";
       exit 1;
     }
   else
     {
-      mkdir("$referencebasepath/$buildid",0755);
-      print "INFO : New directory $referencebasepath/$buildid created\n";
+      mkdir("$referencebasepath/$buildId",0755);
+      print "INFO : New directory $referencebasepath/$buildId created\n";
     }
 }
 
@@ -225,16 +235,42 @@ sub preparedeliverydirectory
     #
     # construct missing directories
     #
-    my @newdirs=("custom", "config");
-    foreach $i (@newdirs)
+    if ( $operatingsystem ne "windows" )
       {
-        print "INFO : mkdir  $deliverypath/$i\n";
-        mkdir ("$deliverypath/$i",0755);
+        my @newdirs=("custom", "config");
+        foreach $i (@newdirs)
+          {
+            print "INFO : mkdir  $deliverypath/$i\n";
+            mkdir ("$deliverypath/$i",0755);
+          }
       }
 }
 
-
 sub downloadfiles
+{
+    my $msipath;
+    my $found;
+
+    system ("cp  $platformpath/BuildInfo.xml $deliverypath/BuildInfo.xml");
+
+    if ( $operatingsystem eq "windows" )
+      {
+        print "INFO : collect files for MSI package delivery for $buildId\n";
+
+	
+        print "INFO : cp $platformpath/ida.03.00.msi $deliverypath/ida.03.00.$buildId.msi\n";
+        system ("cp $platformpath/ida.03.00.msi $deliverypath/ida.03.00.$buildId.msi");
+   
+      }
+    else
+      {
+        downloadfilesforserver ();
+      }
+
+}
+
+
+sub downloadfilesforserver
 {
   #
   # download of the directories from needed for runtime-release
@@ -320,16 +356,33 @@ sub checksourcecontent
   #
   my $i;
   $err = 0;
-  my @modules = ("IdaWebProcess", "IdaTdfProcess");
-    
-  foreach $i (@modules)
+
+  if ( $operatingsystem eq "windows" )
     {
-      checkExistenceXBitAndSize ("$deliverypath/modules/$i");
+      print ("checking $deliverypath/ida.03.00.$buildId.msi\n");
+      checkExistenceAndSize ("$deliverypath/ida.03.00.$buildId.msi");
     }
+  else
+    {
+      my @modules = ("IdaTdfProcess");
+    
+      foreach $i (@modules)
+        {
+          checkExistenceXBitAndSize ("$deliverypath/modules/$i");
+        }
+    }
+  
 	
   if ( $err == 0 )
     {
-      print "***** All processes in ./modules exist.\n";
+      if ( $operatingsystem eq "windows" )
+        {
+          print "***** MSI package exists.\n";
+        }
+      else
+        {
+          print "***** All processes in ./modules exist.\n";
+        }
     }
   else
     {
@@ -351,10 +404,18 @@ sub adjustaccessrights
    # set every directory permission to 755
    print "INFO : adjust directory permissions to 755\n";
    system ("find  $deliverypath -type d |xargs chmod 755");
-
-   print "INFO : adjust executable and lib permissions to 555\n";
-   system ("chmod 555 $deliverypath/bin/*");
-   system ("chmod 555 $deliverypath/modules/*");
+   
+   if ($operatingsystem ne "windows")
+     {
+      print "INFO : adjust executable permissions to 555\n";
+      system ("chmod 555 $deliverypath/bin/*");
+      system ("chmod 555 $deliverypath/modules/*");
+   }
+   else
+     {
+       print "INFO : adjust msi permissions to 555\n";
+      system ("chmod 555 $deliverypath/ida.03.00.*");
+   }
 }
 
 
@@ -374,6 +435,10 @@ sub makereleaseinfo
     chdir $deliverypath;
     print "generating releaseInfo\n";
     system ("/scriptpool/buildinfo/genreleaseinfo");
+    if ( $operatingsystem eq "windows" )
+      {
+        system ("mv ReleaseInfo ReleaseInfo.txt");
+      }
 }
 
 

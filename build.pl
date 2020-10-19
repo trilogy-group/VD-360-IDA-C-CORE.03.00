@@ -17,8 +17,8 @@
 ########################################################################
 #
 #    File:         build.pl
-#    Revision:     1.1
-#    Version date: 21-OCT-2009 14:44:49
+#    Revision:     1.3
+#    Version date: 25-NOV-2009 23:27:42
 #
 ########################################################################
 #
@@ -42,12 +42,14 @@ my $scriptExt;
 if ($UNAME ne "Windows")
   {
     $pool="/pool";
+    $pathDelimiter="/";
     $scriptpool="/scriptpool";
     $scriptext="ksh";
   }
 else
   {
-    $pool="//plato/winpool/pool";
+    $pool="\\\\plato\\winpool\\pool";
+    $pathDelimiter="\\";
     $scriptpool="//schwarz/scriptpool";
     $scriptext="bat";
     $XML::Simple::PREFERRED_PARSER="XML::Parser";
@@ -236,7 +238,7 @@ sub readBuildInfo
       {
         print "BuildInfo.xml missing, please enter build id: ";
         $response=<STDIN>;
-        $projectId = "IDA-C-CORE.02.20";
+        $projectId = "IDA-C-CORE.03.00";
         $ENV{'DM_ROOT'}="/opt/serena/dimensions/10.1/cm";
         print "executing: $scriptpool/dimensions/getBuildInfoForBI.$scriptext $projectId $response\n";
         system ("$scriptpool/dimensions/getBuildInfoForBI.$scriptext $dbName $projectId $response" );
@@ -296,22 +298,20 @@ sub readBuildInfo
 
         if ( $lib->{'bi:softwareName'} =~ "classlib*" )
           {
-            $ENV{'CLHOME'}="$pool/classlib/$version/" . $lib->{'bi:buildId'};
+            $ENV{'CLHOME'}=$pool.$pathDelimiter."classlib".$pathDelimiter.$version . $pathDelimiter . $lib->{'bi:buildId'};
           }
         if ( $lib->{'bi:softwareName'} =~ /stl.*/ )
           {
-            $ENV{'STLPATH'}="$pool/stl/$version/" . $lib->{'bi:buildId'};
+            $ENV{'STLPATH'}=$pool.$pathDelimiter."stl".$pathDelimiter.$version . $pathDelimiter . $lib->{'bi:buildId'};
           }
         if ( $lib->{'bi:softwareName'} =~ /osaapi.*/ )
           {
+            $ENV{'OSAAPIHOME'}=$pool.$pathDelimiter."osaapi".$pathDelimiter.$version.$pathDelimiter.$lib->{'bi:buildId'};
             if ($UNAME eq "Windows")
               {
-                $ENV{'OSAAPIHOME'}="$pool/osaapi/$version/" . $lib->{'bi:buildId'} . "/msvc9.0";
+                $ENV{'OSAAPIHOME'}= $ENV{'OSAAPIHOME'} . "\\msvc9.0";
               }
-            else
-              {
-                $ENV{'OSAAPIHOME'}="$pool/osaapi/$version/" . $lib->{'bi:buildId'};
-              }
+
           }
             
       }

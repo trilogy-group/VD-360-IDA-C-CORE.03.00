@@ -8,6 +8,7 @@
 <?define ModulesDir="..\Windows2000\modules\"?>
 <?define TemplatesDir="..\templates\"?>
 <?define DefaultWebInterfacePort="5590"?>
+<?define RequiredClasslibProductVersion="03.10"?>
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Product Id="f08157fb-ed76-4258-9114-499a535d1949" Name="$(var.Manufacturer) $(var.ProductName) $(var.ProductVersion)" 
@@ -16,6 +17,16 @@
     <Package InstallerVersion="200" Compressed="yes" />
     <Property Id="WEB_INTERFACE_PORT" Value="$(var.DefaultWebInterfacePort)"/>
 
+    <!-- Get installed classlib version -->
+    <Property Id="CL_PRODUCT_VERSION" Secure="yes">
+      <RegistrySearch Id="env.CL_PRODUCT_VERSION" Root="HKLM" Key="SOFTWARE\$(var.Manufacturer)\Classlib" Name="InstalledVersion" Type="raw"/>
+    </Property>
+
+    <!-- See if classlib is installed as a "auto-start" service -->
+    <Property Id="CL_SERVICE_STARTTYPE" Secure="yes">
+      <RegistrySearch Id="env.CL_SERVICE_STARTTYPE" Root="HKLM" Key="SYSTEM\CurrentControlSet\services\classlib" Name="Start" Type="raw"/>
+    </Property>
+    
     <!-- Get current value of CL_ROOT_PATH system environment variable -->
     <Property Id="CL_ROOT_PATH" Secure="yes">
       <RegistrySearch Id="env.CL_ROOT_PATH" Root="HKLM" Key="SYSTEM\CurrentControlSet\Control\Session Manager\Environment" Name="CL_ROOT_PATH" Type="raw"/>
@@ -25,6 +36,10 @@
     <Property Id="IDA_ROOT" Secure="yes">
       <RegistrySearch Id="env.IDA_ROOT" Root="HKLM" Key="SYSTEM\CurrentControlSet\Control\Session Manager\Environment" Name="IDA_ROOT" Type="raw"/>
     </Property>
+
+    <Condition Message="Classlib Runtime Version $(var.RequiredClasslibProductVersion) is not installed">
+      <![CDATA[Installed OR (CL_PRODUCT_VERSION>="$(var.RequiredClasslibProductVersion)")]]>
+    </Condition>
 
     <Media Id="1" Cabinet="ida.cab" EmbedCab="yes" />
 
@@ -50,12 +65,18 @@
               <Component Id="log.dir" Guid="9df3bd47-a020-464a-bfe3-2cd3e27fcd02">
                 <CreateFolder />
               </Component>
+              <Component Id="RestartClasslib" Guid="c95d2b14-0723-492b-9ef1-e42f7eff4990">
+                <!-- Restart classlib if it is installed as an "auto-start" service -->
+                <Condition><![CDATA[CL_SERVICE_STARTTYPE="#2"]]></Condition>
+                <ServiceControl Id="RestartClasslib" Name="classlib" Start="both" Stop="both"/>
+                <!-- The following CreateFolder element is only here to satisfy WiX. -->
+                <CreateFolder/>
+              </Component>
             </Directory>
             <Directory Id="modules" Name="modules">
               <Component Id="IdaTdfProcess.exe" Guid="4cca1ba9-2906-4f8b-aa84-43e178d5ddf4">
                 <File Source="$(var.ModulesDir)IdaTdfProcess.exe" KeyPath="yes"/>
                 <CreateFolder Directory="log"/>
-                <ServiceControl Id="RestartClasslib" Name="classlib" Start="both" Stop="both"/>
               </Component>
               <Component Id="classlib.dll" Guid="eb64bfcd-af50-4f4e-a781-9c74241f91b7">
                 <File Source="$(var.ModulesDir)classlib.dll" KeyPath="yes"/>
@@ -93,6 +114,7 @@
       <ComponentRef Id="IdaTdfProcess.exe" />
       <ComponentRef Id="classlib.dll" />
       <ComponentRef Id="osaapi.dll" />
+      <ComponentRef Id="RestartClasslib" />
       
       <!-- ${CL_ROOT_PATH}\config -->
       <ComponentRef Id="ida_reporter.par" />
