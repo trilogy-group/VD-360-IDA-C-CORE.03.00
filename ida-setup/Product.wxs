@@ -61,11 +61,14 @@
           <Directory Id ="IDAWORKDIR" Name="$(var.ProductName)">
             <Directory Id="config" Name="config">
               <Component Id="ida.par" Guid="dc9cdd09-afee-46c5-80df-d7da0dd44bc0">
+                <CreateFolder >
+                  <Permission User="Everyone" GenericAll="yes"/>
+                </CreateFolder>
                 <File Name="ida.par" Source="$(var.TemplatesDir)ida.par.tpl" KeyPath="yes"/>
                 <Environment Id="env.IDA_WORKDIR_PATH" Action="set" Name="IDA_WORKDIR_PATH" System="yes" Value="[IDAWORKDIR]"/>
               </Component>
               <Component Id="idaprocs.par" Guid="b6804485-6c6f-4518-888c-d8b227a11a83">
-                <File Name="idaprocs.par" Source="$(var.TemplatesDir)idaprocs.par.tpl" KeyPath="yes"/>
+               <File Name="idaprocs.par" Source="$(var.TemplatesDir)idaprocs.par.tpl" KeyPath="yes"/>
               </Component>
             </Directory>
             <Directory Id="dat" Name="dat">
