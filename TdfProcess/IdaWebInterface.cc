@@ -2,7 +2,7 @@
 //
 //   File:      IdaWebInterface.cc
 //   Revision:  1.1
-//   Date:      24-NOV-2009 08:54:42
+//   Date:      29-SEP-2009 17:58:04
 //
 //   DESCRIPTION:
 //
@@ -230,21 +230,21 @@ Void WebInterface::handleServerSocketEvent()
 		#endif
 		
 		// Wir spalten einen StreamSocket ab ...
-    WebConnection* connection = new WebConnection(*this, serverSocket);
-		idaTrackExcept(("***** streamSocket created"));
-    if ( isNotOk == connection->init() )
-    {
+		WebConnection* connection = new WebConnection(*this, serverSocket);
+		idaTrackTrace (("***** streamSocket created"));
+		if ( isNotOk == connection->init() )
+		{
 			idaTrackFatal(("checkInFd(streamSocket...) failed!"));
 			#ifdef MONITORING
 				cout << "*** checkInFd(streamSocket...) failed" << endl;
 			#endif
-      delete connection;
+			delete connection;
 		}
 		else
 		{
 			// Neue Verbindung eintragen
-      _connections[connection->getSockFd()] = connection;
-			idaTrackExcept(("***** streamSocket checked in"));
+			_connections[connection->getSockFd()] = connection;
+			idaTrackTrace(("***** streamSocket checked in"));
 		}
 
 	}

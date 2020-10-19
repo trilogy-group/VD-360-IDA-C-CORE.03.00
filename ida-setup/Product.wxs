@@ -3,16 +3,17 @@
 <?define Manufacturer="Volt Delta"?>
 <?define ProductName="IDA"?>
 <?define ProductVersion="03.00"?>
-<?define ConfigDir="..\config\"?>
-<?define DatDir="..\dat\"?>
-<?define ModulesDir="..\Windows2000\modules\"?>
-<?define TemplatesDir="..\templates\"?>
+<?define IdaDir="..\"?>
+<?define ConfigDir="$(var.IdaDir)config\"?>
+<?define DatDir="$(var.IdaDir)dat\"?>
+<?define ModulesDir="$(var.IdaDir)Windows2000\modules\"?>
+<?define TemplatesDir="$(var.IdaDir)templates\"?>
 <?define DefaultWebInterfacePort="5590"?>
 <?define RequiredClasslibProductVersion="03.10"?>
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Product Id="f08157fb-ed76-4258-9114-499a535d1949" Name="$(var.Manufacturer) $(var.ProductName) $(var.ProductVersion)" 
-           Language="1033" Version="$(var.ProductVersion).00.00" Manufacturer="$(var.Manufacturer)" 
+           Language="1033" Version="$(var.ProductVersion).$(env.BUILD_ID)" Manufacturer="$(var.Manufacturer)" 
            UpgradeCode="384a6943-93c2-47be-946c-5cd82c40c787">
     <Package InstallerVersion="200" Compressed="yes" />
     <Property Id="WEB_INTERFACE_PORT" Value="$(var.DefaultWebInterfacePort)"/>
@@ -31,11 +32,22 @@
     <Property Id="CL_ROOT_PATH" Secure="yes">
       <RegistrySearch Id="env.CL_ROOT_PATH" Root="HKLM" Key="SYSTEM\CurrentControlSet\Control\Session Manager\Environment" Name="CL_ROOT_PATH" Type="raw"/>
     </Property>
+    <!-- Get current value of CL_WORKDIR_PATH system environment variable -->
+    <Property Id="CL_WORKDIR_PATH" Secure="yes">
+      <RegistrySearch Id="env.CL_WORKDIR_PATH" Root="HKLM" Key="SYSTEM\CurrentControlSet\Control\Session Manager\Environment" Name="CL_WORKDIR_PATH" Type="raw"/>
+    </Property>
+
     
     <!-- Get current value of IDA_ROOT system environment variable -->
     <Property Id="IDA_ROOT" Secure="yes">
       <RegistrySearch Id="env.IDA_ROOT" Root="HKLM" Key="SYSTEM\CurrentControlSet\Control\Session Manager\Environment" Name="IDA_ROOT" Type="raw"/>
     </Property>
+
+
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Restart Classlib Service" />
+    <CustomAction Id="RestartClasslib" Directory="CL_ROOT_PATH.bin" ExeCommand="classlib_service_restart.bat" Return="ignore"  />
+    <Property Id="NETEXE">net.exe</Property>
+    <Property Id="classlib_service_restart.bat">$(env.CL_ROOT_PATH)bin\classlib_service_restart.bat</Property>
 
     <Condition Message="Classlib Runtime Version $(var.RequiredClasslibProductVersion) is not installed">
       <![CDATA[Installed OR (CL_PRODUCT_VERSION>="$(var.RequiredClasslibProductVersion)")]]>
@@ -44,13 +56,13 @@
     <Media Id="1" Cabinet="ida.cab" EmbedCab="yes" />
 
     <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="ProgramFilesFolder">
-        <Directory Id="ManufacturerFolder" Name="$(var.Manufacturer)">
-          <Directory Id="INSTALLLOCATION" Name="$(var.ProductName)">
+      <Directory Id="CommonAppDataFolder">
+        <Directory Id="ManufacturerCommonAppDataFolder" Name="$(var.Manufacturer)">
+          <Directory Id ="IDAWORKDIR" Name="$(var.ProductName)">
             <Directory Id="config" Name="config">
               <Component Id="ida.par" Guid="dc9cdd09-afee-46c5-80df-d7da0dd44bc0">
                 <File Name="ida.par" Source="$(var.TemplatesDir)ida.par.tpl" KeyPath="yes"/>
-                <Environment Id="env.IDA_ROOT" Action="set" Name="IDA_ROOT" System="yes" Value="[INSTALLLOCATION]"/>
+                <Environment Id="env.IDA_WORKDIR_PATH" Action="set" Name="IDA_WORKDIR_PATH" System="yes" Value="[IDAWORKDIR]"/>
               </Component>
               <Component Id="idaprocs.par" Guid="b6804485-6c6f-4518-888c-d8b227a11a83">
                 <File Name="idaprocs.par" Source="$(var.TemplatesDir)idaprocs.par.tpl" KeyPath="yes"/>
@@ -61,22 +73,19 @@
                 <File Name="ida.rtd" Source="$(var.DatDir)ida.rtd" KeyPath="yes"/>
               </Component>
             </Directory>
-            <Directory Id="log" Name="log">
-              <Component Id="log.dir" Guid="9df3bd47-a020-464a-bfe3-2cd3e27fcd02">
-                <CreateFolder />
-              </Component>
-              <Component Id="RestartClasslib" Guid="c95d2b14-0723-492b-9ef1-e42f7eff4990">
-                <!-- Restart classlib if it is installed as an "auto-start" service -->
-                <Condition><![CDATA[CL_SERVICE_STARTTYPE="#2"]]></Condition>
-                <ServiceControl Id="RestartClasslib" Name="classlib" Start="both" Stop="both"/>
-                <!-- The following CreateFolder element is only here to satisfy WiX. -->
-                <CreateFolder/>
-              </Component>
-            </Directory>
+          </Directory>
+        </Directory>
+      </Directory>
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="ManufacturerFolder" Name="$(var.Manufacturer)">
+          <Directory Id="INSTALLLOCATION" Name="$(var.ProductName)">
+            <Component Id="ReleaseInfo.txt" Guid="7deba54e-4331-464d-8e32-dd807772de04">
+              <File Source="$(var.IdaDir)ReleaseInfo.txt" KeyPath="yes" />
+            </Component>
             <Directory Id="modules" Name="modules">
               <Component Id="IdaTdfProcess.exe" Guid="4cca1ba9-2906-4f8b-aa84-43e178d5ddf4">
+                <Environment Id="env.IDA_ROOT" Action="set" Name="IDA_ROOT" System="yes" Value="[INSTALLLOCATION]"/>
                 <File Source="$(var.ModulesDir)IdaTdfProcess.exe" KeyPath="yes"/>
-                <CreateFolder Directory="log"/>
               </Component>
               <Component Id="classlib.dll" Guid="eb64bfcd-af50-4f4e-a781-9c74241f91b7">
                 <File Source="$(var.ModulesDir)classlib.dll" KeyPath="yes"/>
@@ -84,22 +93,30 @@
               <Component Id="osaapi.dll" Guid="c9d15260-0819-4a37-adcb-e5f954ff0cef">
                 <File Source="$(var.ModulesDir)osaapi.dll" KeyPath="yes"/>
               </Component>
+<!-- restart classlib component was here -->
             </Directory>
           </Directory>
         </Directory>
       </Directory>
       
-      <!-- Install ida_reporter.par to ${CL_ROOT_PATH}\config -->
-      <Directory Id="CL_ROOT_PATH">
-        <Directory Id="CL_ROOT_PATH.config" Name="config">
+      <!-- Install ida_reporter.par to ${CL_WORKDIR_PATH}\config -->
+      <Directory Id="CL_WORKDIR_PATH">
+        <Directory Id="CL_WORKDIR_PATH.config" Name="config">
           <Component Id="ida_reporter.par" Guid="cd127432-f2a7-4bfc-8abb-90edb4f203de">
             <File Name="ida_reporter.par" Source="$(var.TemplatesDir)ida_reporter.par.tpl" KeyPath="yes"/>
           </Component>
         </Directory>
       </Directory>
+      <Directory Id="CL_ROOT_PATH">
+        <Directory Id="CL_ROOT_PATH.bin">
+          <!-- create an id for the classlib bin directory to restart service (custom action) -->
+        </Directory>
+      </Directory>
     </Directory>
 
     <Feature Id="ProductFeature" Title="$(var.ProductName)" Level="1">
+      <!-- . -->
+      <ComponentRef Id="ReleaseInfo.txt" />
       <!-- config -->
       <ComponentRef Id="ida.par" />
       <ComponentRef Id="idaprocs.par" />
@@ -107,16 +124,12 @@
       <!-- dat -->
       <ComponentRef Id="ida.rtd"/>
       
-      <!-- log -->
-      <ComponentRef Id="log.dir"/>
-      
       <!-- modules -->
       <ComponentRef Id="IdaTdfProcess.exe" />
       <ComponentRef Id="classlib.dll" />
       <ComponentRef Id="osaapi.dll" />
-      <ComponentRef Id="RestartClasslib" />
       
-      <!-- ${CL_ROOT_PATH}\config -->
+      <!-- ${CL_WORKDIR_PATH}\config -->
       <ComponentRef Id="ida_reporter.par" />
     </Feature>
 
@@ -142,7 +155,10 @@
       <DialogRef Id="ResumeDlg" />
       <DialogRef Id="UserExit" />
 
-      <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+      <Publish Dialog="MyExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+      <Publish Dialog="MyExitDialog" Control="Finish" Order="1" Event="DoAction" Value="RestartClasslib">LAUNCHAPPONEXIT</Publish>
+
+
       <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="LicenseAgreementDlg">1</Publish>
       <Publish Dialog="LicenseAgreementDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
       <Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog" Value="PortNumberDlg">1</Publish>
@@ -188,6 +204,22 @@
           <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
         </Control>
       </Dialog>
+      <Dialog Id="MyExitDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
+        <Control Id="Finish" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Cancel="yes" Text="!(loc.WixUIFinish)" />
+        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Disabled="yes" Text="!(loc.WixUICancel)" />
+        <Control Id="Bitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="234" TabSkip="no" Text="!(loc.ExitDialogBitmap)" />
+        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Disabled="yes" Text="!(loc.WixUIBack)" />
+        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+        <Control Id="Description" Type="Text" X="135" Y="70" Width="220" Height="20" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogDescription)" />
+        <Control Id="Title" Type="Text" X="135" Y="20" Width="220" Height="60" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogTitle)" />
+
+        <Control Id="LaunchCheckBox" Type="CheckBox" X="10" Y="243" Width="170" Height="17" Property="LAUNCHAPPONEXIT" Hidden="yes" CheckBoxValue="1" Text="Restart Classlib Service when setup exits.">
+          <Condition Action="show">NOT Installed</Condition>
+        </Control>
+      </Dialog>
+
+
+
     </UI>
     <WixVariable Id="WixUIBannerBmp" Value="Resources\bannrbmp.bmp" />
     <WixVariable Id="WixUIDialogBmp" Value="Resources\dlgbmp.bmp" />
@@ -198,14 +230,18 @@
     <CustomAction Id="preparePatchConfigFiles"
                   Return="check"
                   Property="patchConfigFiles"
-                  Value="[INSTALLLOCATION];[DB_OID];[SERVICE_NAME];[WEB_INTERFACE_PORT]"/>
+                  Value="[IDAWORKDIR];[DB_OID];[SERVICE_NAME];[WEB_INTERFACE_PORT]"/>
 
     <CustomAction Id="patchConfigFiles"
                   Execute="deferred"
                   Return="check"
                   BinaryKey="setup_js"
                   JScriptCall="patchConfigFiles" />
-    
+
+ 
+    <CustomAction Id="stopClasslib" Property="classlib_service_restart.bat" ExeCommand=""/>
+    <CustomAction Id="startClasslib" Property="NETEXE" ExeCommand="start classlib"  />
+
     <InstallExecuteSequence>
       <Custom Action="preparePatchConfigFiles" After="PatchFiles"/>
     </InstallExecuteSequence>
@@ -213,9 +249,20 @@
     <InstallExecuteSequence>
       <Custom Action="patchConfigFiles" After="preparePatchConfigFiles">NOT Installed</Custom>
       
-      <!-- Ask the user to reboot only if the value of the IDA_ROOT system environment variable changed -->
-      <ScheduleReboot After='InstallFinalize'><![CDATA[IDA_ROOT<>INSTALLLOCATION]]></ScheduleReboot>
+      <!-- Ask the user to reboot only if the value of the IDA_ROOT system environment variable changed  
+           and only if running on Windows version less than 6.00. Starting with Windows Vista, a reboot is not
+           required to receive the modified system environment variables in services processes.
+           See also http://msdn.microsoft.com/en-us/library/aa370556(VS.85).aspx for a list of VersionNT values.
+      -->
+      <Custom Action="RestartClasslib" After='InstallFinalize'>Installed AND NOT UPGRADINGPRODUCTCODE</Custom>
+      <ScheduleReboot After='InstallFinalize'><![CDATA[(IDA_ROOT<>INSTALLLOCATION) AND (VersionNT<600)]]></ScheduleReboot>
     </InstallExecuteSequence>
-  
-</Product>
+    <InstallUISequence>
+      <Show Dialog="MyExitDialog" OnExit="success" />
+    </InstallUISequence>
+
+    <AdminUISequence>
+      <Show Dialog="MyExitDialog" OnExit="success" />
+    </AdminUISequence>
+  </Product>
 </Wix>

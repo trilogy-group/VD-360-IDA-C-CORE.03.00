@@ -18,7 +18,7 @@
 #
 #    File:         build.pl
 #    Revision:     1.3
-#    Version date: 25-NOV-2009 23:27:42
+#    Version date: 28-OCT-2009 14:31:42
 #
 ########################################################################
 #
@@ -101,6 +101,8 @@ if ($compile eq "no" )
 
 if (  $UNAME eq "Windows")
   {
+    makereleaseinfo ();
+    
     $ENV{'OSAAPI_LIB_PATH'}=$ENV{'OSAAPIHOME'};
     $ENV{'CL_LIB_PATH'}=$ENV{'CLHOME'};
     $ENV{'STL_INCLUDE_PATH'}=$ENV{'STLPATH'};
@@ -108,6 +110,7 @@ if (  $UNAME eq "Windows")
     print "CL_LIB_PATH     = $ENV{'CL_LIB_PATH'}\n";
     print "OSAAPI_LIB_PATH = $ENV{'OSAAPI_LIB_PATH'}\n";
     print "STL_INCLUDE_PATH= $ENV{'STL_INCLUDE_PATH'}\n";
+    print "BUILD_ID        = $ENV{'BUILD_ID'}\n";
 
     
     $cmd = "devenv.exe ida.sln";
@@ -263,6 +266,7 @@ sub readBuildInfo
     my $buildInfo = XMLin($xmlBuildInfo, ForceArray => [ 'Library' ], ForceArray => [ 'ExternalLibrary' ], 'KeyAttr' => [ ]);
 
     my $buildId =  $buildInfo->{Software}->{'bi:buildId'};
+    $ENV{'BUILD_ID'}=$buildId;
     my $buildNo;
     my $buildOs;
     ($buildNo,$buildOs) = split ( /\./, $buildId );
@@ -1467,7 +1471,16 @@ sub lookInTree
   }
 
 	  
-	  
+sub makereleaseinfo 
+  {
+    if ( $UNAME eq "Windows" )
+    {
+       print "INFO: generating ReleaseInfo\n";
+       system (pwd>pwd.txt);
+       system ("$scriptpool/buildinfo/genreleaseinfo.bat BuildInfo.xml ReleaseInfo.txt");
+    }
+  }
+
 	  
 	  
 	  

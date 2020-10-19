@@ -32,9 +32,9 @@
 
 // Problem
 101=request generation failed:
-102=timeout within WebProcess
+102=timeout in WebConnection
 103=connection closed by servlet
-104=failed to send response to WebProcess
+104=failed to send response to WebConnection
 105=could not find corresponding request
 107=TDF search argument generation failed:
 108=response generation failed:
@@ -55,7 +55,7 @@
 202=end process:
 203=service available: 
 204=request received from IDA Servlet
-205=request received from WebProcess
+205=request received from WebConnection
 206=request sent to TdfAccess
 207=receiving response from TdfAccess complete
 208=response sent to IDA_CGI_Handler
@@ -77,6 +77,4 @@
 224=search confirmation response received from TDF_OTG
 231=deRegisterReportIndication from TDF Server
 232=handle TDF error
-234=reject response sent to WebProcess
-235=response from SesProcess
-236=sending SES autentication aknowledge
+234=reject response sent to WebConnection

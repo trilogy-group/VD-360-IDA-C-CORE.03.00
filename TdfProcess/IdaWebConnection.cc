@@ -39,7 +39,7 @@ ReturnStatus WebConnection::init()
   }
 
   // Neue Verbindung eintragen
-  idaTrackExcept(("***** streamSocket checked in"));
+  idaTrackTrace(("***** streamSocket checked in"));
   return isOk;
 }
 
@@ -73,7 +73,7 @@ Void WebConnection::dispose()
 #endif
 
   _streamSocket.closeSocket();
-  idaTrackExcept(("***** socket checked out, closed !"));
+  idaTrackTrace(("***** socket checked out, closed !"));
 
   if ( _timerId != -1 )
   {

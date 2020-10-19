@@ -2,7 +2,7 @@
 //
 //   File:      IdaTdfAccess.cc
 //   Revision:  1.1
-//   Date:      24-NOV-2009 10:48:59
+//   Date:      29-SEP-2009 17:58:03
 //
 //   DESCRIPTION:
 //
@@ -1085,7 +1085,7 @@ Void TdfAccess::handleErrorArg(TdfErrorArg tdfErrorArg)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	Diese Methode behandelt einen Request gleich welcher Art (Login, Logout, Such-Request, ...) der
-//	von einem WebProcess kommt. Ihre Aufgabe ist, ein RequestContainer-Objekt anzulegen und
+//	von einer WebConnection kommt. Ihre Aufgabe ist, ein RequestContainer-Objekt anzulegen und
 //	mit allen benötigten Informationen zu füllen um den den Request "sende-fertig" in die Sende-Liste
 //	(= requestPool) einzutragen. Dazu gehört auch die Wandlung vom XML- in das proprietäre TDS-Format.
 //	Das eigentliche Senden (bzw. zuvor Authentifizieren) übernimmt dann die Methode processSendQueue.
@@ -1096,12 +1096,10 @@ Void TdfAccess::handleRequest(const UShort requestId, const String& xmlString)
 
  {
    PcpTime time;
-   idaTrackData(("*** Request from WebProcess received at %d:%d:%d,%d",
+   idaTrackData(("*** Request from WebConnection received at %d:%d:%d,%d",
                  time.getHour(), time.getMinute(), time.getSec(), time.getMilliSec()));
  }
 
-
- idaTrackData(("request received from WebProcess"));
  EVENT(0, iDAMinRepClass, 205, "");
 
 #ifdef MONITORING

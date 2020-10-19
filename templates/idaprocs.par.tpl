@@ -1,11 +1,8 @@
 //CB>-------------------------------------------------------------------
 //
-//   File, Component, Release:
-//						  templates\idaprocs.par.tpl 1.0 12-APR-2008 18:52:11 DMSYS
-//
-//   File:      templates\idaprocs.par.tpl
-//   Revision:      1.0
-//   Date:          12-APR-2008 18:52:11
+//   File:          idaprocs.par.tpl
+//   Revision:      1.2
+//   Date:          05-DEC-2009 20:16:49
 //
 //   DESCRIPTION:
 //
@@ -17,12 +14,10 @@
 //
 //<CE-------------------------------------------------------------------
 
-// "@(#) templates\idaprocs.par.tpl 1.0 12-APR-2008 18:52:11 DMSYS"
-
 Process SET
 BEGIN
 	name        = "${IDA_ROOT}/modules/IdaTdfProcess"
-	args        = "\"${IDA_ROOT}/config/ida.par\" -tf \"${IDA_ROOT}/log/IdaTdfProcess\""
+	args        = "\"${IDA_WORKDIR_PATH}config/ida.par\" -tf \"${TRACE_DIR}IdaTdfProcess\""
 	groupName   = "ida"
 	controlMode = "supervisor"
 	processId   = #890

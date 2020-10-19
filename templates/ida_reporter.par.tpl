@@ -74,6 +74,6 @@ Applreports SET
 BEGIN
     reportClass = "IDA"
     reportClassId = #8301
-    reportTextDefFile  = "${IDA_ROOT}/dat/ida.rtd"
+    reportTextDefFile  = "${IDA_WORKDIR_PATH}/dat/ida.rtd"
 END
 ENDSET
