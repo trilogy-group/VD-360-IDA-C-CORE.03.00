@@ -34,7 +34,7 @@ SET
 BEGIN
   register_timer         = #60000       // Registrationtimer in [ms]
   search_timeout         = #10000       // Timer for queries in [ms]
-  max_registration       = #10000       // Maximum number of registration attempts
+  max_registration       = #-1          // Maximum number of registration attempts (-1 is unlimited number of attempts)
 END
 ENDSET
 // -------------------------------------------------------------------------------

@@ -1,14 +1,14 @@
 //CB>---------------------------------------------------------------------------
 //
 //   File:      IdaWebConnection.cc
-//   Revision:  1.5
-//   Date:      11-MAY-2012 10:27:48
+//   Revision:  1.8
+//   Date:      15-MAY-2012 13:35:43
 //
 //   Description: handle connections to ida servlets
 //
 //<CE---------------------------------------------------------------------------
 
-static const char * SCCS_Id_IdaWebConnection_cc = "@(#) IdaWebConnection.cc 1.5";
+static const char * SCCS_Id_IdaWebConnection_cc = "@(#) IdaWebConnection.cc 1.8";
 
 
 #include "IdaWebConnection.h"
@@ -67,7 +67,7 @@ Void WebConnection::dispose()
   
 #ifdef _WINDOWS
 // DE_MR_5621, cp, 2010-08-06
-  if (_streamSocket.setLinger(true, 5) != isOk)
+  if (_streamSocket.setLinger(true, 10) != isOk)
   {
 	  idaTrackExcept(("setLinger() returned isNotOk"));
   }
@@ -92,7 +92,7 @@ Void WebConnection::dispose()
 	  idaTrackTrace(("socket closed"));
   }
 #else
-  _streamSocket.setLinger ( true, 5 );
+  _streamSocket.setLinger ( true, 10 );
   _streamSocket.setBlocking(false);
   _streamSocket.closeSocket();
   idaTrackTrace(("***** socket checked out, closed !"));
@@ -181,13 +181,18 @@ Void WebConnection::handleStreamSocketEvent()
 
   if (_streamSocket.setBlocking(true) != isNotOk)
   {
-	  idaTrackExcept(("setBlocking(true) failed"));
+	  idaTrackTrace(("setBlocking(true) failed"));
   }
+  else
+  {
+          idaTrackTrace(("setBlocking(true) succeeded"));
+  }
+  
 
   char buffer[Types::MAX_LEN_QUERY_STRING];
   if (_streamSocket.readStream(buffer, Types::MAX_LEN_QUERY_STRING - 1, receivedBytes) != isOk) 
   {
-    idaTrackExcept(("socket.readStream() failed. Client closed connection ?"));
+    idaTrackTrace(("socket.readStream() failed. Client closed connection ?"));
     idaTrackTrace(("socket.readStream() receivedBytes = %d", receivedBytes)); 
     _webInterface.reportProblem(iDAMinRepClass, 103, "");
     dispose();
@@ -275,7 +280,11 @@ ReturnStatus WebConnection::sendViaSocketAndClose(const String& sendString)
   
   if (_streamSocket.setBlocking(true) != isNotOk)
   {
-	  idaTrackExcept(("setBlocking(true) failed"));
+	  idaTrackTrace(("setBlocking(true) failed"));
+  }
+  else
+  {
+          idaTrackTrace(("setBlocking(true) succeeded"));
   }
 
   idaTrackData(("***** writing data within loop in blocking mode"));

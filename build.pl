@@ -16,9 +16,9 @@
 #
 ########################################################################
 #
-#    File:         build.pl
-#    Revision:     1.8
-#    Version date: 14-MAY-2012 16:54:16
+#    File:         %PM: build.pl %
+#    Revision:     %PR: 1.9 %
+#    Version date: %PUDT: 14-MAY-2012 16:54:16 %
 #
 ########################################################################
 #
@@ -117,7 +117,7 @@ sub initialize
 	  $logfile="";
      $err=0;
      @tmplist=();
-     @SUPPORTED_PLATFORMS=qw (AIX52 HP-UX11 SuSE-Linux9 SuSE-Linux10 Windows2000);
+     @SUPPORTED_PLATFORMS=qw (AIX52 HP-UX11 SuSE-Linux10 Windows2000);
 
 	 ################ determine platform  #######################
      #

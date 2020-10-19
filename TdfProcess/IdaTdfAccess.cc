@@ -6,7 +6,7 @@
 //
 //<CE-------------------------------------------------------------------
 
-static const char * SCCS_Id_TdfAccess_cc = "@(#) IdaTdfAccess.cc 1.9";
+static const char * SCCS_Id_TdfAccess_cc = "@(#) IdaTdfAccess.cc 1.10";
 
 #include <stdafx.h>
 #include <IdaDecls.h>
@@ -1560,7 +1560,7 @@ Void TdfAccess::timerBox(const RefId id)
     return;
   }
 
-  idaTrackFatal(("Ignoring unrelated timer message"));
+  idaTrackTrace(("Ignoring unrelated timer message"));
 }
 
 
