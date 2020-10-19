@@ -1,12 +1,12 @@
 //CB>-------------------------------------------------------------------
 //
 //   File:      IdaTdfAccess.cc
-//   Revision:  1.7
-//   Date:      11-AUG-2010 15:41:30
+//   Revision:  1.8
+//   Date:      17-MAR-2011 15:09:18
 //
 //<CE-------------------------------------------------------------------
 
-static const char * SCCS_Id_TdfAccess_cc = "@(#) IdaTdfAccess.cc 1.7";
+static const char * SCCS_Id_TdfAccess_cc = "@(#) IdaTdfAccess.cc 1.8";
 
 #include <stdafx.h>
 #include <IdaDecls.h>
@@ -2146,7 +2146,7 @@ Void TdfAccess::dataToHexString(String byteSequence, String& result)
 
 // DE_MR_5606, cp, 2010-08-04
 // increase buffer length
-  const Uint buflen = 2048;
+  const Uint buflen = 4096;
   char buf[buflen];
 
   idaTrackTrace(("TdfAccess: byteSequence.len() = %d", byteSequence.len()));

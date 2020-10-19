@@ -1,14 +1,14 @@
 //CB>---------------------------------------------------------------------------
 //
 //   File:      IdaWebConnection.cc
-//   Revision:  1.4
-//   Date:      06-AUG-2010 17:13:18
+//   Revision:  1.5
+//   Date:      11-MAY-2012 10:27:48
 //
 //   Description: handle connections to ida servlets
 //
 //<CE---------------------------------------------------------------------------
 
-static const char * SCCS_Id_IdaWebConnection_cc = "@(#) IdaWebConnection.cc 1.4";
+static const char * SCCS_Id_IdaWebConnection_cc = "@(#) IdaWebConnection.cc 1.5";
 
 
 #include "IdaWebConnection.h"
@@ -64,29 +64,39 @@ Void WebConnection::dispose()
   {
     idaTrackFatal(("***** stream socket check out failed !"));
   }
-
-  // 24.09.2009, cha:
-  // On Windows you must either call shutdown() on the socket, or
-  // set the SO_LINGER option with l_onoff=0 to achieve a proper
-  // ("graceful") shutdown of the socket with closesocket(). If
-  // you set the SO_LINGER option to l_onoff=1 with a non-zero
-  // l_linger value (e. g. 5 seconds), closesocket() will either
-  // reset or terminate the socket without a TCP FIN packet being
-  // sent. This would cause an error on the client side (IDA servlet).
-  // The InputStreamReader in the IDA servlet (see OsaConnection.java)
-  // would not return null, causing improper processing of the
-  // sent response.
+  
 #ifdef _WINDOWS
-  _streamSocket.setLinger(false);
-  _streamSocket.setBlocking(false);
- // ::shutdown(_streamSocket.getSockFd(), SD_BOTH); (should be done by streamSocket.closeSocket)
+// DE_MR_5621, cp, 2010-08-06
+  if (_streamSocket.setLinger(true, 5) != isOk)
+  {
+	  idaTrackExcept(("setLinger() returned isNotOk"));
+  }
+
+  // alternative for shutdown()
+  /*
+  LPFN_DISCONNECTEX fnDisconnectEx = NULL;
+  GUID gufn = WSAID_DISCONNECTEX;
+  DWORD dwBytes;
+  WSAIoctl(_streamSocket.getSockFd(), SIO_GET_EXTENSION_FUNCTION_POINTER, &gufn, sizeof(gufn), &fnDisconnectEx, sizeof(fnDisconnectEx), &dwBytes, NULL, NULL);
+  fnDisconnectEx(_streamSocket.getSockFd(), NULL, 0, 0);
+  */
+
+  // don't use _streamSocket.closeSocket(), because this would cause a 2nd shutdown() ...
+  int sockResult = closesocket(_streamSocket.getSockFd());
+  if (sockResult != 0)
+  {
+	  idaTrackExcept(("closesocket() error, WSAGetLastError is %d", WSAGetLastError()));
+  }
+  else
+  {
+	  idaTrackTrace(("socket closed"));
+  }
 #else
   _streamSocket.setLinger ( true, 5 );
   _streamSocket.setBlocking(false);
-#endif
-
   _streamSocket.closeSocket();
   idaTrackTrace(("***** socket checked out, closed !"));
+#endif
 
   if ( _timerId != -1 )
   {
@@ -94,7 +104,10 @@ Void WebConnection::dispose()
     _timerId = -1;
   }
   
-  _webInterface.removeConnection( this );
+  if (_webInterface.removeConnection( this ) != isOk)
+  {
+	  idaTrackExcept(("removeConnection() returned isNotOk"));
+  }
   delete this;
 }
 
@@ -165,7 +178,12 @@ Void WebConnection::handleStreamSocketEvent()
   // Hier wird gepr¸ft, dass die Ergebnisl‰nge kleiner als die Bufferl‰nge ist
   ssize_t	receivedBytes;
 //svc	_streamSocket.setBlocking(false);
-  _streamSocket.setBlocking(true);
+
+  if (_streamSocket.setBlocking(true) != isNotOk)
+  {
+	  idaTrackExcept(("setBlocking(true) failed"));
+  }
+
   char buffer[Types::MAX_LEN_QUERY_STRING];
   if (_streamSocket.readStream(buffer, Types::MAX_LEN_QUERY_STRING - 1, receivedBytes) != isOk) 
   {
@@ -181,7 +199,7 @@ Void WebConnection::handleStreamSocketEvent()
   // (Der Client hat den Socket geschlossen)
   if (receivedBytes == 0)
   {
-    idaTrackExcept(("***** 0 bytes received, = transmition end"));
+    idaTrackTrace(("***** 0 bytes received, transmission end"));
     dispose();
     return;
   }
@@ -255,7 +273,10 @@ ReturnStatus WebConnection::sendViaSocketAndClose(const String& sendString)
   size_t  sendLength = sendString.cStringLen();
   char*   str        = (char*)sendString.cString();
   
-  _streamSocket.setBlocking(true);
+  if (_streamSocket.setBlocking(true) != isNotOk)
+  {
+	  idaTrackExcept(("setBlocking(true) failed"));
+  }
 
   idaTrackData(("***** writing data within loop in blocking mode"));
   while (sendLength > 0)
@@ -290,44 +311,29 @@ ReturnStatus WebConnection::sendViaSocketAndClose(const String& sendString)
     str        += bytesSend;
   }
 
-
   {
     PcpTime time;
-
     idaTrackData(("*** Response written to Socket at  %d:%d:%d,%d\n", time.getHour(), time.getMinute(), time.getSec(), time.getMilliSec()));
   }
 
-  //// -------------------------------------------------------------------------
-  //// Es sollen keine Events den StreamSocket betreffend gesendet werden
-  //eventDispatcher->checkOut(_streamSocket.getSockFd());
-
-  //idaTrackData(("Zeitmessung"));
-  //{
-  //  PcpTime t0;
-
-  //  // Eine kleine Pause
-
-  //   PcpHandle handle;
-  //   waitForEvent ( handle, 100);
-  //   
-  //  RelTime delta = PcpTime() - t0;
-  //  idaTrackData(("***** sleeping = %d", delta.inMilliSeconds()));
-  //}
-
-  // Checkout, close socket, delete this
+#ifdef _WINDOWS
+  // DE_MR_5621, cp, 2010-08-06
+  // signal to client that server is finished with sending;
+  // wait with checkout/closesocket until client has closed connection
+  int sockResult = shutdown(_streamSocket.getSockFd(), SD_SEND);
+  if (sockResult != 0)
+  {
+	  idaTrackExcept(("shutdown error, WSAGetLastError is %d", WSAGetLastError()));
+  }
+  else
+  {
+	  idaTrackTrace(("socket shut down"));
+  }
+#else
+  // checkout, close socket, delete this
   dispose();
+#endif
 
-////	shutdown(_streamSocket.getSockFd(), 0);
-//
-//	if (_streamSocket.closeSocket() == isNotOk)
-//	{
-//		// Fehler beim Schlieﬂen des Sockets
-//		idaTrackExcept(("WebInterface::sendViaSocketAndClose failed (closeSocket)"));
-//		return isNotOk;
-//	}
-//	idaTrackTrace(("***** socket closed !"));
-//	connectionFlag = false;
-//
 //	#ifdef MONITORING
 //		{
 //			++gesamtCounter;
