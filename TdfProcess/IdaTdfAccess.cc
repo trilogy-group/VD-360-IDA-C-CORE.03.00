@@ -2,11 +2,11 @@
 //
 //   File:      IdaTdfAccess.cc
 //   Revision:  1.8
-//   Date:      17-MAR-2011 15:09:18
+//   Date:      11-AUG-2010 15:47:51
 //
 //<CE-------------------------------------------------------------------
 
-static const char * SCCS_Id_TdfAccess_cc = "@(#) IdaTdfAccess.cc 1.8";
+static const char * SCCS_Id_TdfAccess_cc = "@(#) IdaTdfAccess.cc 1.9";
 
 #include <stdafx.h>
 #include <IdaDecls.h>
@@ -1144,7 +1144,7 @@ Void TdfAccess::handleRequest(const UShort requestId, const String& xmlString)
   // ------------------------------------------------------------------------
   // Aus der payload versuchen wir ein DOM-Dokument aufzubauen
   PcpErrorArg err;
-  if ( PCPXML::createDOMFromString ( xmlString, xmlSource, parser, doc, rootNode, err ) == isNotOk )
+  if ( PCPXML::createDOMFromString ( xmlString, xmlSource, parser, doc, rootNode, err, "default" ) == isNotOk )
   {
     idaTrackExcept (( "cannot parse xml document to DOM" ));
     String errorText = err.getInfo ( NULL, NULL );
