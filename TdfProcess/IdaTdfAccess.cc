@@ -2127,17 +2127,29 @@ ReturnStatus TdfAccess::sendResponse(UShort requestId,	// Message Referenznummer
 Void TdfAccess::dataToHexString(String byteSequence, String& result)
 {
 	TRACE_FUNCTION("TdfAccess::dataToHexString(...)");
+	//idaTrackTrace(("TdfAccess::dataToHexString(...)"));
 
-	char buf[265];
+    const Uint buflen = 264;
+	char buf[265];  // +1: including 0 as end of string
 
+	Uint pos=0;
 	for (UInt h = 0; h < byteSequence.len(); h ++)
 	{
-		sprintf(buf + (h << 1), "%02X", (unsigned int) (unsigned char) byteSequence[h]);
-	}
-	buf[2 * byteSequence.len()] = '\0';
+		sprintf(buf+pos, "%02X", (unsigned int) (unsigned char) byteSequence[h]);
+        pos = pos + 2;
 
-	result = String(buf);
-}
+		if( pos == buflen )
+		{
+		  buf[pos] = '\0';
+		  result += String(buf);
+		  pos = 0;
+		}
+	}
+
+	buf[pos] = '\0';
+	result += String(buf);
+
+  }
 
 
 
@@ -3002,10 +3014,14 @@ Void TdfAccess::processSendQueue()
 Data& TdfAccess::hexToData(const char * hex)
 {
 	TRACE_FUNCTION("TdfAccess::hexToData(...)");
+	//idaTrackTrace(("TdfAccess::hexToData(...)"));
+
 
 	// Buffer zurücksetzen
 	tempData.reset();
+    const Uint buflen = 1024;
 	static char buffer[1024];
+	String result;
 
 	// Schutz vor Null-Pointer Übergabe
 	if (hex == 0) return tempData;
@@ -3014,6 +3030,7 @@ Data& TdfAccess::hexToData(const char * hex)
 	if ((strlen(hex) % 2) != 0) return tempData;
 
 	size_t i = 0;
+	size_t pos = 0;
 	UShort l = 0;
 	for (; i < strlen(hex) - 1; i += 2)
 	{
@@ -3023,9 +3040,21 @@ Data& TdfAccess::hexToData(const char * hex)
 
 	   c1 = (c1 >= 'A') ? (c1 - 'A' + 10) : (c1 - '0');
 	   c2 = (c2 >= 'A') ? (c2 - 'A' + 10) : (c2 - '0');
-	   buffer[i >> 1] = (c1 << 4) + c2;
+
+	   buffer[pos] = (c1 << 4) + c2;
+	   pos++;
+
+	   if( pos == buflen )
+	   {
+		 result += String( buffer, pos );
+		 pos = 0;
+	   }
 	}
-	tempData.assign(buffer, l);
+
+	result += String( buffer, pos );
+
+	
+	tempData.assign(result.cString(), l);
 
 	return tempData;
 }
